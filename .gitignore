@@ -1,0 +1,54 @@
+import os
+
+# Define the content for the .gitignore file tailored for WP Plugin Boilerplate
+gitignore_content = """# --- WordPress Plugin Boilerplate Git Ignore ---
+
+# Hệ điều hành (OS)
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Trình soạn thảo (Editors/IDEs)
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+*.swp
+
+# Các thư mục chứa tài liệu hoặc quá trình build
+node_modules/
+dist/
+vendor/
+npm-debug.log
+yarn-error.log
+
+# Các file log & cache
+*.log
+.cache/
+.sass-cache/
+
+# Files nén (nếu bạn tạo bản zip để gửi)
+*.zip
+*.tar.gz
+
+# Các file cấu hình Composer hoặc Package Manager
+composer.lock
+package-lock.json
+
+# Cấu hình kiểm thử (Unit Testing)
+/tests/phpunit/multisite.xml
+phpunit.xml
+.phpunit.result.cache
+
+# Lưu ý: Không nên ignore các file .css và .js trong thư mục admin/ và public/ 
+# vì chúng là một phần của plugin để hoạt động.
+"""
+
+# Define the file path
+file_path = "gitignore_boilerplate.txt" # We'll name it txt for easy reading or .gitignore
+
+with open(file_path, "w", encoding="utf-8") as f:
+    f.write(gitignore_content)
+
+print(f"File created: {file_path}")
