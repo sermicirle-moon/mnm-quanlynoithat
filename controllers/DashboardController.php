@@ -12,6 +12,16 @@ class DashboardController {
         $roleId = $_SESSION['qln_role_id'];
 
         // Truyền biến ra View
-        include plugin_dir_path(__FILE__) . '../views/dashboard-view.php';
+        switch ($roleId) {
+            case 1:
+                include plugin_dir_path(__FILE__) . '../views/dashboard/admin-view.php'; // Trang Admin hiện tại
+                break;
+            case 2:
+                include plugin_dir_path(__FILE__) . '../views/dashboard/sale-view.php';
+                break;
+            case 3:
+                include plugin_dir_path(__FILE__) . '../views/dashboard/warehouse-view.php';
+                break;
+        }
     }
 }

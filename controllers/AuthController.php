@@ -44,27 +44,35 @@ class AuthController {
     }
 
     private function register() {
-        $name = sanitize_text_field($_POST['name']);
-        $email = sanitize_email($_POST['email']);
-        $password = password_hash($_POST['password'], PASSWORD_DEFAULT); // Mã hóa pass
+        $name     = sanitize_text_field($_POST['name']);
+        $email    = sanitize_email($_POST['email']);
         $que_quan = sanitize_text_field($_POST['que_quan']);
-        if ($this->userRepo->findByEmail($email)) {
-            $_SESSION['qln_error'] = "Email này đã được sử dụng!";
+        $role_id  = intval($_POST['role_id']); // Lấy role_id từ select box
+        
+        $password = $_POST['password'];
+        $confirm_password = $_POST['confirm_password'];
+
+        if ($password !== $confirm_password) {
+            $_SESSION['qln_error'] = "Mật khẩu xác nhận không khớp!";
             return;
         }
+        if ($this->userRepo->findByEmail($email)) {
+        $_SESSION['qln_error'] = "Email này đã được sử dụng!";
+        return;
+    }
 
         $newUser = new User([
-            'email' => $email,
-            'mat_khau' => $password,
-            'ho_ten' => $name,
+            'email'    => $email,
+            'mat_khau' => password_hash($password, PASSWORD_DEFAULT),
+            'ho_ten'   => $name,
             'que_quan' => $que_quan,
-            'role_id' => 2 // NV
+            'role_id'  => $role_id
         ]);
 
-        if ($this->userRepo->create($newUser)) {
-            $_SESSION['qln_success'] = "Đăng ký thành công! Vui lòng đăng nhập.";
-            wp_redirect(admin_url('admin.php?page=qln-login'));
-            exit;
+            if ($this->userRepo->create($newUser)) {
+                $_SESSION['qln_success'] = "Đăng ký thành công! Vui lòng đăng nhập.";
+                wp_redirect(admin_url('admin.php?page=qln-login'));
+                exit;
+            }
         }
-    }
 }

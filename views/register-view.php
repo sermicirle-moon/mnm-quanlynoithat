@@ -55,9 +55,10 @@
                 </div>
                 <div>
                     <label class="block text-xs font-medium text-gray-500 uppercase mb-1">Chức vụ</label>
-                    <select name="chuc_vu" class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-green-700 outline-none transition" required>
-                        <option value="Nhân viên kinh doanh">Nhân viên kinh doanh</option>
-                        <option value="Quản lý kho">Quản lý kho</option>
+                    <select name="role_id" class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-green-700 outline-none transition" required>
+                        <option value="1">Quản lý</option>
+                        <option value="2">Nhân viên kinh doanh</option>
+                        <option value="3">Quản lý kho</option>
                         
                     </select>
                 </div>
