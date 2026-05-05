@@ -6,6 +6,6 @@ class InvoiceController {
         }
         $repo = new InvoiceRepository();
         $invoices = $repo->getAll();
-        include plugin_dir_path(__FILE__) . '../views/NVKD/invoice-view.php';
+        include plugin_dir_path(__FILE__) . '../views/Sale/invoice-view.php';
     }
 }
