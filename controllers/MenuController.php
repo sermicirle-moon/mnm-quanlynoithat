@@ -1,21 +1,44 @@
 <?php
 class MenuController {
     public function initMenu() {
-        // Menu chính ẩn sidebar mặc định của WP bằng CSS trong View
+        // 1. Menu chính (Trang Dashboard)
         add_menu_page(
             'TimberFlow', 'TimberFlow', 'read', 'qln-dashboard',
             [$this, 'renderDashboard'], 'dashicons-store', 2
         );
 
         // Các sub-menu ẩn (dùng để định tuyến trang Đăng nhập / Đăng ký mà không hiện lên menu WP)
-        add_submenu_page('qln-dashboard', 'Đăng nhập', 'Đăng nhập', 'read', 'qln-login', [$this, 'renderLogin']);
-        add_submenu_page('qln-dashboard', 'Đăng ký', 'Đăng ký', 'read', 'qln-register', [$this, 'renderRegister']);
         add_submenu_page('qln-dashboard', 'Nhập hàng', 'Nhập hàng', 'read', 'qln-nhap-hang', [$this, 'renderNhapHang']);
-    }
+        add_submenu_page(null, 'Sản phẩm', 'Sản phẩm', 'read', 'qln-products', [$this, 'renderProducts']);
+        add_submenu_page(null, 'Khách hàng', 'Khách hàng', 'read', 'qln-customers', [$this, 'renderCustomers']);
+        add_submenu_page(null, 'Hóa đơn', 'Hóa đơn', 'read', 'qln-invoices', [$this, 'renderInvoices']);
+        
+        // 3. Các trang hệ thống
+        add_submenu_page(null, 'Đăng nhập', 'Đăng nhập', 'read', 'qln-login', [$this, 'renderLogin']);
+        add_submenu_page(null, 'Đăng ký', 'Đăng ký', 'read', 'qln-register', [$this, 'renderRegister']);
+        add_submenu_page(null, 'Đăng xuất', 'Đăng xuất', 'read', 'qln-logout', function(){});
+        }
+
+    // --- CÁC HÀM XỬ LÝ GỌI CONTROLLER TƯƠNG ỨNG ---
 
     public function renderDashboard() {
-        $dashboardController = new DashboardController();
-        $dashboardController->index();
+        $controller = new DashboardController();
+        $controller->index();
+    }
+
+    public function renderProducts() {
+        $controller = new ProductController();
+        $controller->index();
+    }
+
+    public function renderCustomers() {
+        $controller = new CustomerController();
+        $controller->index();
+    }
+
+    public function renderInvoices() {
+        $controller = new InvoiceController();
+        $controller->index();
     }
 
     public function renderLogin() {

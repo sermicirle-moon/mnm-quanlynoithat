@@ -19,14 +19,22 @@ function qln_start_session() {
 
 // 1. Nhúng Models
 require_once plugin_dir_path(__FILE__) . 'models/User.php';
-
+require_once plugin_dir_path(__FILE__) . 'models/Product.php';
+require_once plugin_dir_path(__FILE__) . 'models/Customer.php';
+require_once plugin_dir_path(__FILE__) . 'models/Invoice.php';
 // 2. Nhúng Repositories
 require_once plugin_dir_path(__FILE__) . 'repositories/UserRepository.php';
+require_once plugin_dir_path(__FILE__) . 'repositories/ProductRepository.php';
+require_once plugin_dir_path(__FILE__) . 'repositories/CustomerRepository.php';
+require_once plugin_dir_path(__FILE__) . 'repositories/InvoiceRepository.php';
 
 // 3. Nhúng Controllers
 require_once plugin_dir_path(__FILE__) . 'controllers/AuthController.php';
 require_once plugin_dir_path(__FILE__) . 'controllers/DashboardController.php';
 require_once plugin_dir_path(__FILE__) . 'controllers/MenuController.php';
+require_once plugin_dir_path(__FILE__) . 'controllers/ProductController.php';
+require_once plugin_dir_path(__FILE__) . 'controllers/CustomerController.php';
+require_once plugin_dir_path(__FILE__) . 'controllers/InvoiceController.php';
 
 // Khởi chạy Menu
 $menuController = new MenuController();
