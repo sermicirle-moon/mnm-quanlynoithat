@@ -14,13 +14,13 @@ class DashboardController {
         // Truyền biến ra View
         switch ($roleId) {
             case 1:
-                include plugin_dir_path(__FILE__) . '../views/dashboard/admin-view.php'; // Trang Admin hiện tại
+                include plugin_dir_path(__FILE__) . '../views/Admin/admin-view.php'; // Trang Admin hiện tại
                 break;
             case 2:
-                include plugin_dir_path(__FILE__) . '../views/dashboard/sale-view.php';
+                include plugin_dir_path(__FILE__) . '../views/NVKD/sale-view.php';
                 break;
             case 3:
-                include plugin_dir_path(__FILE__) . '../views/dashboard/warehouse-view.php';
+                include plugin_dir_path(__FILE__) . '../views/NVK/warehouse-view.php';
                 break;
         }
     }

@@ -52,13 +52,13 @@
                 <a href="#" class="flex items-center gap-3 px-4 py-2.5 hover:bg-slate-800 text-slate-400 hover:text-white rounded-xl transition duration-200">
                     <i class="fa-solid fa-truck-fast w-5 text-center"></i> Vận chuyển
                 </a>
-                <a href="#" class="flex items-center gap-3 px-4 py-2.5 hover:bg-slate-800 text-slate-400 hover:text-white rounded-xl transition duration-200">
+                <a href="<?php echo admin_url('admin.php?page=qln-customer'); ?>" class="flex items-center gap-3 px-4 py-2.5 hover:bg-slate-800 text-slate-400 hover:text-white rounded-xl transition duration-200">
                     <i class="fa-solid fa-users w-5 text-center"></i> Khách hàng
                 </a>
-                <a href="#" class="flex items-center gap-3 px-4 py-2.5 hover:bg-slate-800 text-slate-400 hover:text-white rounded-xl transition duration-200">
+                <a href="<?php echo admin_url('admin.php?page=qln-invoice'); ?>" class="flex items-center gap-3 px-4 py-2.5 hover:bg-slate-800 text-slate-400 hover:text-white rounded-xl transition duration-200">
                     <i class="fa-solid fa-file-invoice-dollar w-5 text-center"></i> Hóa đơn
                 </a>
-                <a href="#" class="flex items-center gap-3 px-4 py-2.5 hover:bg-slate-800 text-slate-400 hover:text-white rounded-xl transition duration-200">
+                <a href="<?php echo admin_url('admin.php?page=qln-product'); ?>" class="flex items-center gap-3 px-4 py-2.5 hover:bg-slate-800 text-slate-400 hover:text-white rounded-xl transition duration-200">
                     <i class="fa-solid fa-box w-5 text-center"></i> Sản phẩm
                 </a>
                 <a href="#" class="flex items-center gap-3 px-4 py-2.5 hover:bg-slate-800 text-slate-400 hover:text-white rounded-xl transition duration-200">

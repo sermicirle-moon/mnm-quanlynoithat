@@ -64,7 +64,6 @@
                 <div>
                     <div class="flex justify-between items-center mb-2">
                         <label class="block text-xs font-medium text-gray-500 uppercase tracking-wide">Mật khẩu</label>
-                        <a href="#" class="text-xs text-green-700 hover:underline">Quên mật khẩu?</a>
                     </div>
                     <input type="password" name="password" placeholder="••••••••" class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:border-green-700 focus:ring-1 focus:ring-green-700 transition" required>
                 </div>
