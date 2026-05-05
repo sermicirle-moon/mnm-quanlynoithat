@@ -30,15 +30,15 @@
                 <i class="fa-solid fa-chart-pie w-5 text-center"></i> Dashboard
             </a>
             
-            <a href="<?php echo admin_url('admin.php?page=qln-invoice'); ?>" class="flex items-center gap-3 px-4 py-2.5 hover:bg-slate-800 text-slate-400 hover:text-white rounded-xl transition duration-200">
+            <a href="<?php echo admin_url('admin.php?page=qln-invoices'); ?>" class="flex items-center gap-3 px-4 py-2.5 hover:bg-slate-800 text-slate-400 hover:text-white rounded-xl transition duration-200">
                 <i class="fa-solid fa-file-invoice-dollar w-5 text-center"></i> Hóa đơn
             </a>
             
-            <a href="<?php echo admin_url('admin.php?page=qln-customer'); ?>" class="flex items-center gap-3 px-4 py-2.5 bg-green-500/10 text-green-400 rounded-xl border border-green-500/20 transition duration-200">
+            <a href="<?php echo admin_url('admin.php?page=qln-customers'); ?>" class="flex items-center gap-3 px-4 py-2.5 bg-green-500/10 text-green-400 rounded-xl border border-green-500/20 transition duration-200">
                 <i class="fa-solid fa-users w-5 text-center"></i> Khách hàng
             </a>
             
-            <a href="<?php echo admin_url('admin.php?page=qln-product'); ?>" class="flex items-center gap-3 px-4 py-2.5 hover:bg-slate-800 text-slate-400 hover:text-white rounded-xl transition duration-200">
+            <a href="<?php echo admin_url('admin.php?page=qln-products'); ?>" class="flex items-center gap-3 px-4 py-2.5 hover:bg-slate-800 text-slate-400 hover:text-white rounded-xl transition duration-200">
                 <i class="fa-solid fa-box w-5 text-center"></i> Sản phẩm
             </a>
         </nav>

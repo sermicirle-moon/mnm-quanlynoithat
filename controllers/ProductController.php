@@ -6,6 +6,19 @@ class ProductController {
         }
         $repo = new ProductRepository();
         $products = $repo->getAll();
-        include plugin_dir_path(__FILE__) . '../views/NVKD/product-view.php';
+        $roleId = $_SESSION['qln_role_id'];
+
+        // Truyền biến ra View
+        switch ($roleId) {
+            case 1:
+                include plugin_dir_path(__FILE__) . '../views/Admin/product-view.php'; // Trang Admin hiện tại
+                break;
+            case 2:
+                include plugin_dir_path(__FILE__) . '../views/Sale/product-view.php';
+                break;
+            case 3:
+                include plugin_dir_path(__FILE__) . '../views/Warehouse/product-view.php';
+                break;
+        }
     }
 }
