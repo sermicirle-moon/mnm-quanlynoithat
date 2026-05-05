@@ -6,6 +6,7 @@ class CustomerController {
         }
         $repo = new CustomerRepository();
         $customers = $repo->getAll();
-        include plugin_dir_path(__FILE__) . '../views/NVKD/customer-view.php';
+        include plugin_dir_path(__FILE__) . '../views/Sale/customer-view.php';
+        include plugin_dir_path(__FILE__) . '../views/Admin/customer-view.php';
     }
 }

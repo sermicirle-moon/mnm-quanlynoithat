@@ -17,10 +17,10 @@ class DashboardController {
                 include plugin_dir_path(__FILE__) . '../views/Admin/admin-view.php'; // Trang Admin hiện tại
                 break;
             case 2:
-                include plugin_dir_path(__FILE__) . '../views/NVKD/sale-view.php';
+                include plugin_dir_path(__FILE__) . '../views/Sale/sale-view.php';
                 break;
             case 3:
-                include plugin_dir_path(__FILE__) . '../views/NVK/warehouse-view.php';
+                include plugin_dir_path(__FILE__) . '../views/Warehouse/warehouse-view.php';
                 break;
         }
     }
