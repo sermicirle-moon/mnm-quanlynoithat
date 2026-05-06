@@ -1,8 +1,4 @@
 <?php if (!defined('ABSPATH')) exit; ?>
-
-<script src="https://cdn.tailwindcss.com"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-
 <style>
     /* Ẩn các thông báo rác (update, cảnh báo plugin) của WP để giao diện app sạch sẽ */
     .notice, .updated, .error, .update-nag { display: none !important; }
@@ -18,64 +14,6 @@
     .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #475569; }
 </style>
 
-<div class="flex bg-gray-50 rounded-xl overflow-hidden shadow-md border border-gray-200 mt-4 mr-4" style="height: calc(100vh - 70px);">
-
-    <aside class="w-64 bg-slate-900 text-white flex flex-col shrink-0 z-10">
-        <div class="h-16 flex items-center px-6 border-b border-slate-800 shrink-0">
-            <div class="flex items-center gap-3">
-                <div class="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center shadow-lg shadow-green-600/30">
-                    <i class="fa-solid fa-couch text-sm"></i>
-                </div>
-                <span class="font-bold text-lg tracking-tight">TimberFlow</span>
-            </div>
-        </div>
-
-        <nav class="flex-1 p-4 space-y-1 overflow-y-auto custom-scrollbar">
-            <p class="text-[10px] uppercase font-bold text-slate-500 ml-2 mb-3 mt-2 tracking-wider">Menu Hệ Thống</p>
-            
-            <?php 
-            $current_role = isset($_SESSION['qln_role_id']) ? $_SESSION['qln_role_id'] : 1; 
-            
-            if ($current_role == 1): ?>
-                <a href="#" class="flex items-center gap-3 px-4 py-2.5 bg-green-500/10 text-green-400 rounded-xl border border-green-500/20 transition duration-200">
-                    <i class="fa-solid fa-chart-pie w-5 text-center"></i> Dashboard
-                </a>
-                <a href="#" class="flex items-center gap-3 px-4 py-2.5 hover:bg-slate-800 text-slate-400 hover:text-white rounded-xl transition duration-200">
-                    <i class="fa-solid fa-users-gear w-5 text-center"></i> Quản lý nhân viên
-                </a>
-                <a href="#" class="flex items-center gap-3 px-4 py-2.5 hover:bg-slate-800 text-slate-400 hover:text-white rounded-xl transition duration-200">
-                    <i class="fa-solid fa-truck-field w-5 text-center"></i> Nhà cung cấp
-                </a>
-                <a href="#" class="flex items-center gap-3 px-4 py-2.5 hover:bg-slate-800 text-slate-400 hover:text-white rounded-xl transition duration-200">
-                    <i class="fa-solid fa-magnifying-glass-chart w-5 text-center"></i> Phân tích báo cáo
-                </a>
-                <a href="#" class="flex items-center gap-3 px-4 py-2.5 hover:bg-slate-800 text-slate-400 hover:text-white rounded-xl transition duration-200">
-                    <i class="fa-solid fa-truck-fast w-5 text-center"></i> Vận chuyển
-                </a>
-                <a href="<?php echo admin_url('admin.php?page=qln-customer'); ?>" class="flex items-center gap-3 px-4 py-2.5 hover:bg-slate-800 text-slate-400 hover:text-white rounded-xl transition duration-200">
-                    <i class="fa-solid fa-users w-5 text-center"></i> Khách hàng
-                </a>
-                <a href="<?php echo admin_url('admin.php?page=qln-invoice'); ?>" class="flex items-center gap-3 px-4 py-2.5 hover:bg-slate-800 text-slate-400 hover:text-white rounded-xl transition duration-200">
-                    <i class="fa-solid fa-file-invoice-dollar w-5 text-center"></i> Hóa đơn
-                </a>
-                <a href="<?php echo admin_url('admin.php?page=qln-product'); ?>" class="flex items-center gap-3 px-4 py-2.5 hover:bg-slate-800 text-slate-400 hover:text-white rounded-xl transition duration-200">
-                    <i class="fa-solid fa-box w-5 text-center"></i> Sản phẩm
-                </a>
-                <a href="#" class="flex items-center gap-3 px-4 py-2.5 hover:bg-slate-800 text-slate-400 hover:text-white rounded-xl transition duration-200">
-                    <i class="fa-solid fa-file-import w-5 text-center"></i> Nhập hàng
-                </a>
-                <a href="#" class="flex items-center gap-3 px-4 py-2.5 hover:bg-slate-800 text-slate-400 hover:text-white rounded-xl transition duration-200">
-                    <i class="fa-solid fa-file-export w-5 text-center"></i> Xuất hàng
-                </a>
-            <?php endif; ?>
-        </nav>
-
-        <div class="p-4 border-t border-slate-800 shrink-0">
-            <a href="?page=qln-logout" class="flex items-center gap-3 px-4 py-2.5 text-red-400 hover:bg-red-500/10 hover:text-red-300 rounded-xl transition duration-200">
-                <i class="fa-solid fa-right-from-bracket w-5 text-center"></i> Thoát hệ thống
-            </a>
-        </div>
-    </aside>
 
     <div class="flex-1 flex flex-col min-w-0 bg-gray-50 overflow-hidden">
         
@@ -204,4 +142,3 @@
             </div>
         </main>
     </div>
-</div>

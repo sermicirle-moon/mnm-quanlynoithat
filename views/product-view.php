@@ -1,42 +1,4 @@
-<div class="flex bg-gray-50 rounded-xl overflow-hidden shadow-sm border border-gray-200" style="min-height: 85vh; margin-top: 20px; margin-right: 20px;">
-    
-    <aside class="w-64 bg-slate-900 text-white flex flex-col flex-shrink-0 h-screen shadow-xl z-20">
-        <div class="p-6 border-b border-slate-800 shrink-0">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 bg-green-600 rounded-lg flex items-center justify-center">
-                    <i class="fa-solid fa-couch text-xl"></i>
-                </div>
-                <span class="font-bold text-lg tracking-tight">TimberFlow</span>
-            </div>
-        </div>
-
-        <nav class="flex-1 p-4 space-y-1 overflow-y-auto custom-scrollbar">
-            <p class="text-[10px] uppercase font-bold text-slate-500 ml-2 mb-3 mt-2 tracking-wider">Menu Hệ Thống</p>
-            
-            <a href="#" class="flex items-center gap-3 px-4 py-2.5 hover:bg-slate-800 text-slate-400 hover:text-white rounded-xl transition duration-200">
-                <i class="fa-solid fa-chart-pie w-5 text-center"></i> Dashboard
-            </a>
-            
-            <a href="<?php echo admin_url('admin.php?page=qln-products'); ?>" class="flex items-center gap-3 px-4 py-2.5 bg-green-500/10 text-green-400 rounded-xl border border-green-500/20 transition duration-200">
-                <i class="fa-solid fa-box w-5 text-center"></i> Sản phẩm
-            </a>
-            
-            <a href="#" class="flex items-center gap-3 px-4 py-2.5 hover:bg-slate-800 text-slate-400 hover:text-white rounded-xl transition duration-200">
-                <i class="fa-solid fa-file-import w-5 text-center"></i> Nhập hàng
-            </a>
-            
-            <a href="#" class="flex items-center gap-3 px-4 py-2.5 hover:bg-slate-800 text-slate-400 hover:text-white rounded-xl transition duration-200">
-                <i class="fa-solid fa-file-export w-5 text-center"></i> Xuất hàng
-            </a>
-        </nav>
-
-        <div class="p-4 border-t border-slate-800 shrink-0">
-            <a href="?page=qln-logout" class="flex items-center gap-3 px-4 py-3 text-red-400 hover:bg-red-400/10 rounded-xl transition">
-                <i class="fa-solid fa-right-from-bracket w-5 text-center"></i> Thoát hệ thống
-            </a>
-        </div>
-    </aside>
-
+<?php if (!defined('ABSPATH')) exit; // Exit if accessed directly ?>
 <div class="flex-1 overflow-y-auto p-8 bg-gray-50">
     <div class="flex justify-between items-end mb-6">
         <div>
