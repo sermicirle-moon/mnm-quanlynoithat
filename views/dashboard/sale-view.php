@@ -1,142 +1,211 @@
 <?php if (!defined('ABSPATH')) exit; ?>
-    <div class="flex-1 flex flex-col h-screen overflow-hidden bg-gray-50">
-        
-        <header class="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-8 shrink-0 z-10 shadow-sm">
-            <h2 class="font-bold text-gray-800 text-lg">Quản lý kinh doanh</h2>
-            <div class="flex items-center gap-5">
-                <div class="relative cursor-pointer hover:bg-gray-100 p-2 rounded-full transition">
-                    <span class="absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white"></span>
-                    <i class="fa-solid fa-bell text-gray-500 text-lg"></i>
-                </div>
-                <div class="h-6 w-[1px] bg-gray-200"></div>
-                <div class="flex items-center gap-3 cursor-pointer hover:bg-gray-50 p-1.5 rounded-lg transition">
-                    <div class="text-right hidden md:block">
-                        <p class="text-sm font-bold text-gray-800"><?php echo isset($userName) ? esc_html($userName) : 'Nhân viên sales'; ?></p>
-                        <p class="text-[10px] font-semibold text-green-600 underline decoration-2 offset-2 uppercase">Sales Online</p>
-                    </div>
-                    <div class="w-9 h-9 rounded-full bg-green-100 border border-green-200 flex items-center justify-center font-bold text-green-700 shadow-sm">
-                        <?php echo isset($userName) ? substr($userName, 0, 1) : 'S'; ?>
-                    </div>
-                </div>
-            </div>
-        </header>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-        <main class="flex-1 overflow-y-auto p-8 custom-scrollbar">
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.05)] hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <p class="text-sm text-gray-500 font-medium mb-1 tracking-tight">Đơn hàng hôm nay</p>
-                            <h3 class="text-3xl font-bold text-gray-800">42</h3>
-                        </div>
-                        <div class="w-12 h-12 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center text-xl"><i class="fa-solid fa-cart-shopping"></i></div>
-                    </div>
-                    <div class="mt-4 flex items-center gap-2">
-                        <span class="text-xs font-semibold text-orange-600 bg-orange-50 px-2 py-1 rounded-md flex items-center gap-1"><i class="fa-solid fa-clock"></i> ORD-9121</span>
-                        <span class="text-xs text-gray-400 font-medium">mới nhất</span>
-                    </div>
-                </div>
-
-                <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.05)] hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <p class="text-sm text-gray-500 font-medium mb-1 tracking-tight">Doanh thu tháng</p>
-                            <h3 class="text-3xl font-bold text-gray-800">1.2tr</h3>
-                        </div>
-                        <div class="w-12 h-12 rounded-xl bg-green-50 text-green-600 flex items-center justify-center text-xl"><i class="fa-solid fa-money-bill-trend-up"></i></div>
-                    </div>
-                    <div class="mt-4 flex items-center gap-2">
-                        <span class="text-xs font-semibold text-green-600 bg-green-50 px-2 py-1 rounded-md flex items-center gap-1"><i class="fa-solid fa-arrow-trend-up"></i> 12%</span>
-                        <span class="text-xs text-gray-400 font-medium">tăng trưởng</span>
-                    </div>
-                </div>
-
-                <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.05)] hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <p class="text-sm text-gray-500 font-medium mb-1 tracking-tight">Khách hàng mới</p>
-                            <h3 class="text-3xl font-bold text-gray-800">15</h3>
-                        </div>
-                        <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl"><i class="fa-solid fa-user-plus"></i></div>
-                    </div>
-                    <div class="mt-4 flex items-center gap-2">
-                        <span class="text-xs font-semibold text-blue-600 bg-blue-50 px-2 py-1 rounded-md flex items-center gap-1"><i class="fa-solid fa-calendar-plus"></i> 3 tháng</span>
-                        <span class="text-xs text-gray-400 font-medium">so với tháng trước</span>
-                    </div>
-                </div>
-
-                <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.05)] hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <p class="text-sm text-gray-500 font-medium mb-1 tracking-tight">Đơn hàng chờ duyệt</p>
-                            <h3 class="text-3xl font-bold text-red-600">8</h3>
-                        </div>
-                        <div class="w-12 h-12 rounded-xl bg-red-50 text-red-600 flex items-center justify-center text-xl"><i class="fa-solid fa-clock"></i></div>
-                    </div>
-                    <div class="mt-4 flex items-center gap-2">
-                        <span class="text-xs font-semibold text-red-600 bg-red-50 px-2 py-1 rounded-md flex items-center gap-1"><i class="fa-solid fa-exclamation-triangle"></i> Cần xử lý</span>
-                        <span class="text-xs text-gray-400 font-medium">trong hôm nay</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-white rounded-2xl border border-gray-100 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.05)] overflow-hidden">
-                <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-white shrink-0">
-                    <h3 class="font-bold text-gray-800 text-lg">Hóa đơn mới nhất</h3>
-                    <button class="text-sm text-green-600 font-semibold hover:text-green-700 hover:underline px-3 py-1.5 rounded-lg hover:bg-green-50 transition">Xem tất cả</button>
-                </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
-                        <thead class="bg-gray-50/80 text-xs uppercase font-bold text-gray-500 tracking-wider">
-                            <tr>
-                                <th class="px-6 py-4 border-b border-gray-100">Mã hóa đơn</th>
-                                <th class="px-6 py-4 border-b border-gray-100">Khách hàng</th>
-                                <th class="px-6 py-4 border-b border-gray-100">Tổng tiền</th>
-                                <th class="px-6 py-4 border-b border-gray-100">Trạng thái</th>
-                                <th class="px-6 py-4 border-b border-gray-100 text-right">Ngày tạo</th>
-                            </tr>
-                        </thead>
-                        <tbody class="text-sm divide-y divide-gray-100 bg-white">
-                            <tr class="hover:bg-gray-50/50 transition">
-                                <td class="px-6 py-4 font-bold text-green-700">#INV-8911</td>
-                                <td class="px-6 py-4 text-gray-800 font-medium">Nội thất ABC - Hà Nội</td>
-                                <td class="px-6 py-4 text-gray-800 font-medium">12.500.000đ</td>
-                                <td class="px-6 py-4">
-                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-green-50 text-green-700 border border-green-200">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-green-500 mr-1.5"></span>
-                                        Đã thanh toán
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4 text-gray-500 text-right">04/05/2026</td>
-                            </tr>
-                            <tr class="hover:bg-gray-50/50 transition">
-                                <td class="px-6 py-4 font-bold text-green-700">#INV-8910</td>
-                                <td class="px-6 py-4 text-gray-800 font-medium">Gỗ Việt Mỹ - HCM</td>
-                                <td class="px-6 py-4 text-gray-800 font-medium">8.200.000đ</td>
-                                <td class="px-6 py-4">
-                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-yellow-50 text-yellow-700 border border-yellow-200">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-yellow-500 mr-1.5"></span>
-                                        Chờ thanh toán
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4 text-gray-500 text-right">03/05/2026</td>
-                            </tr>
-                             <tr class="hover:bg-gray-50/50 transition">
-                                <td class="px-6 py-4 font-bold text-green-700">#INV-8909</td>
-                                <td class="px-6 py-4 text-gray-800 font-medium">Nội thất Modern - Đà Nẵng</td>
-                                <td class="px-6 py-4 text-gray-800 font-medium">15.000.000đ</td>
-                                <td class="px-6 py-4">
-                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-red-50 text-red-700 border border-red-200">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-red-500 mr-1.5"></span>
-                                        Đã hủy
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4 text-gray-500 text-right">02/05/2026</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </main>
+<div class="flex-1 overflow-y-auto p-8 bg-gray-50">
+    <!-- Chào mừng -->
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-800">Chào buổi sáng, <?php echo esc_html($userName); ?>!</h1>
+        <p class="text-gray-500 mt-1">Hôm nay bạn có <span class="font-bold text-green-600"><?php echo $pending_orders; ?></span> đơn hàng cần xử lý và <span class="font-bold text-blue-600"><?php echo count($potential_customers); ?></span> khách hàng tiềm năng.</p>
     </div>
+
+    <!-- Cards thống kê -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
+            <div class="flex justify-between items-start">
+                <div>
+                    <p class="text-sm text-gray-500 font-medium">DOANH THU THÁNG</p>
+                    <h3 class="text-2xl font-bold text-gray-800 mt-1"><?php echo qln_format_compact_money($current_month_revenue); ?>đ</h3>
+                </div>
+                <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl">
+                    <i class="fa-solid fa-chart-line"></i>
+                </div>
+            </div>
+            <div class="mt-4 text-xs <?php echo $growth >= 0 ? 'text-green-600' : 'text-red-600'; ?> bg-gray-50 inline-block px-2 py-1 rounded-md">
+                <i class="fa-solid fa-arrow-trend-up"></i> 12% so với tháng trước
+            </div>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
+            <div class="flex justify-between items-start">
+                <div>
+                    <p class="text-sm text-gray-500 font-medium">SỐ ĐƠN HÀNG</p>
+                    <h3 class="text-2xl font-bold text-gray-800 mt-1"><?php echo $monthly_orders; ?></h3>
+                </div>
+                <div class="w-12 h-12 rounded-xl bg-green-50 text-green-600 flex items-center justify-center text-xl">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                </div>
+            </div>
+            <div class="mt-4 text-xs text-gray-500">Đơn hàng thành công (không hủy)</div>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
+            <div class="flex justify-between items-start">
+                <div>
+                    <p class="text-sm text-gray-500 font-medium">HOÀN THÀNH MỤC TIÊU</p>
+                    <h3 class="text-2xl font-bold text-gray-800 mt-1"><?php echo $revenue_percent; ?>%</h3>
+                </div>
+                <div class="w-12 h-12 rounded-xl bg-yellow-50 text-yellow-600 flex items-center justify-center text-xl">
+                    <i class="fa-solid fa-flag-checkered"></i>
+                </div>
+            </div>
+            <div class="mt-4 text-xs text-gray-500">Mục tiêu doanh thu: <?php echo number_format($target_revenue); ?>đ</div>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
+            <div class="flex justify-between items-start">
+                <div>
+                    <p class="text-sm text-gray-500 font-medium">TRUNG BÌNH NGÀNH</p>
+                    <h3 class="text-2xl font-bold text-gray-800 mt-1"><?php echo $orders_percent; ?>%</h3>
+                </div>
+                <div class="w-12 h-12 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center text-xl">
+                    <i class="fa-solid fa-chart-simple"></i>
+                </div>
+            </div>
+            <div class="mt-4 text-xs <?php echo $orders_percent >= 68 ? 'text-green-600' : 'text-red-600'; ?>">Cao hơn TB: <?php echo abs($orders_percent - 68); ?>%</div>
+        </div>
+    </div>
+
+    <!-- Biểu đồ doanh thu 7 ngày -->
+    <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm mb-8">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="font-bold text-gray-800">Doanh thu cá nhân theo tuần</h3>
+            <p class="text-xs text-gray-400">Dữ liệu 7 ngày gần nhất</p>
+        </div>
+        <canvas id="weeklyRevenueChart" height="100"></canvas>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Ghi chú & nhắc nhở (tĩnh) -->
+        <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
+            <h3 class="font-bold text-gray-800 mb-4">Ghi chú & Nhắc nhở</h3>
+            <div class="space-y-4">
+                <div class="border-l-4 border-blue-500 pl-3 py-2">
+                    <p class="font-semibold text-gray-800">Gọi lại cho anh Hùng</p>
+                    <p class="text-sm text-gray-500">Ghi bàn giao bắt đầu ăn gì đó chi.</p>
+                    <p class="text-xs text-gray-400 mt-1">14:30 - Hôm nay</p>
+                </div>
+                <div class="border-l-4 border-yellow-500 pl-3 py-2">
+                    <p class="font-semibold text-gray-800">Gửi catalog cho chị Lan</p>
+                    <p class="text-sm text-gray-500">Mẫu mới kết hợp các trang cụ thể hơn.</p>
+                    <p class="text-xs text-gray-400 mt-1">23:59 - 25/05/2026</p>
+                </div>
+                <div class="border-l-4 border-red-500 pl-3 py-2">
+                    <p class="font-semibold text-gray-800">Check tồn kho đặt mới</p>
+                    <p class="text-sm text-gray-500">Định lượng mua mới cho tháng sau.</p>
+                    <p class="text-xs text-gray-400 mt-1">Cần ưu tiên</p>
+                </div>
+            </div>
+            <div class="mt-4 pt-4 border-t">
+                <div class="flex gap-2">
+                    <input type="text" placeholder="Thêm ghi chú mới..." class="flex-1 px-3 py-2 border rounded-lg text-sm" disabled>
+                    <button class="bg-gray-300 text-gray-500 px-4 py-2 rounded-lg text-sm" disabled>+ Thêm</button>
+                </div>
+                <p class="text-xs text-gray-400 mt-2">Tính năng này sẽ được cập nhật sau</p>
+            </div>
+        </div>
+
+        <!-- Đơn hàng cần xử lý -->
+        <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
+            <h3 class="font-bold text-gray-800 mb-4">Đơn hàng cần xử lý</h3>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead class="bg-gray-50 text-gray-500 text-xs">
+                        <tr><th class="p-2 text-left">Mã đơn</th><th class="p-2 text-left">Khách hàng</th><th class="p-2 text-right">Giá trị</th></tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($pending_list as $order): ?>
+                        <tr class="border-b">
+                            <td class="p-2 font-mono"><?php echo esc_html($order->ma_hd); ?></td>
+                            <td class="p-2"><?php echo esc_html($order->ten_kh); ?></td>
+                            <td class="p-2 text-right font-semibold"><?php echo number_format($order->tong_tien); ?>đ</td>
+                        </tr>
+                        <?php endforeach; ?>
+                        <?php if (empty($pending_list)): ?>
+                        <tr><td colspan="3" class="p-4 text-center text-gray-400">Không có đơn hàng cần xử lý</td></tr>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
+            <div class="mt-4 text-right">
+                <a href="?page=qln-invoices" class="text-blue-600 text-sm hover:underline">Xem tất cả →</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
+        <!-- Khách hàng tiềm năng -->
+        <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
+            <h3 class="font-bold text-gray-800 mb-4">Khách hàng tiềm năng</h3>
+            <div class="space-y-3">
+                <?php foreach ($potential_customers as $pot): ?>
+                <div class="flex justify-between items-center border-b pb-2">
+                    <div>
+                        <p class="font-medium text-gray-800"><?php echo esc_html($pot->ten_kh); ?></p>
+                        <p class="text-xs text-gray-500"><?php echo esc_html($pot->email ?: $pot->sdt); ?></p>
+                        <p class="text-xs text-gray-400">Đăng ký: <?php echo date('d/m/Y', strtotime($pot->ngay_tao)); ?></p>
+                    </div>
+                    <a href="?page=qln-customers&action=edit&id=<?php echo $pot->id; ?>" class="text-blue-500 hover:text-blue-700"><i class="fa-regular fa-message"></i> Liên hệ</a>
+                </div>
+                <?php endforeach; ?>
+                <?php if (empty($potential_customers)): ?>
+                <p class="text-gray-400 text-sm">Chưa có khách hàng tiềm năng mới.</p>
+                <?php endif; ?>
+            </div>
+        </div>
+
+        <!-- Tìm kiếm khách hàng -->
+        <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex items-center justify-center">
+            <div class="text-center">
+                <i class="fa-regular fa-compass text-4xl text-gray-400 mb-3"></i>
+                <h3 class="font-bold text-gray-800 mb-2">Tìm kiếm khách hàng</h3>
+                <form action="<?php echo admin_url('admin.php'); ?>" method="GET" class="mt-2">
+                    <input type="hidden" name="page" value="qln-customers">
+                    <div class="flex gap-2">
+                        <input type="text" name="search" placeholder="Nhập tên, email, SĐT..." class="flex-1 px-3 py-2 border rounded-lg text-sm">
+                        <button type="submit" class="bg-gray-800 text-white px-4 py-2 rounded-lg text-sm">Tìm</button>
+                    </div>
+                </form>
+                <p class="text-xs text-gray-400 mt-3">Khám phá thêm khách hàng tiềm năng từ danh sách</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const ctx = document.getElementById('weeklyRevenueChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: <?php echo json_encode($week_days); ?>,
+            datasets: [{
+                label: 'Doanh thu (đ)',
+                data: <?php echo json_encode($daily_revenue); ?>,
+                backgroundColor: 'rgba(34, 197, 94, 0.6)',
+                borderRadius: 8
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return value.toLocaleString() + 'đ';
+                        }
+                    }
+                }
+            },
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return context.raw.toLocaleString() + 'đ';
+                        }
+                    }
+                }
+            }
+        }
+    });
+</script>
