@@ -12,6 +12,8 @@ class MenuController {
         add_submenu_page(null, 'Sản phẩm', 'Sản phẩm', 'read', 'qln-products', [$this, 'renderProducts']);
         add_submenu_page(null, 'Khách hàng', 'Khách hàng', 'read', 'qln-customers', [$this, 'renderCustomers']);
         add_submenu_page(null, 'Hóa đơn', 'Hóa đơn', 'read', 'qln-invoices', [$this, 'renderInvoices']);
+        add_submenu_page(null, 'Tạo PN', 'Tạo PN', 'read', 'qln-nhap-hang-add', [$this, 'renderNhapHangAdd']);
+        add_submenu_page(null, 'Lưu PN', 'Lưu PN', 'read', 'qln-nhap-hang-store', [$this, 'renderNhapHangStore']);
         
         // 3. Các trang hệ thống
         add_submenu_page(null, 'Đăng nhập', 'Đăng nhập', 'read', 'qln-login', [$this, 'renderLogin']);
@@ -52,5 +54,17 @@ class MenuController {
         require_once plugin_dir_path(__FILE__) . 'PhieuNhapController.php';
         $controller = new PhieuNhapController();
         $controller->index();
+    }
+
+    public function renderNhapHangAdd() {
+        require_once plugin_dir_path(__FILE__) . 'PhieuNhapController.php';
+        $controller = new PhieuNhapController();
+        $controller->create();
+    }
+
+    public function renderNhapHangStore() {
+        require_once plugin_dir_path(__FILE__) . 'PhieuNhapController.php';
+        $controller = new PhieuNhapController();
+        $controller->store();
     }
 }

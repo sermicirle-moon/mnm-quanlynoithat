@@ -22,6 +22,6 @@ class ProductController {
         $view_content = $base_view_path . $view_name;
 
         // 3. Gọi Layout chính (Layout này sẽ tự include Sidebar và $view_content)
-        include $base_view_path . 'layout/masterlayout.php';
+        include plugin_dir_path(__FILE__) . '../views/layout/masterlayout.php';
     }
 }
