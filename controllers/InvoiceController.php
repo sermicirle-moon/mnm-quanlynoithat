@@ -8,7 +8,7 @@ class InvoiceController {
         $invoices = $repo->getAll();
         $roleId = $_SESSION['qln_role_id'];
 
-        $base_view_path = plugin_dir_path(__FILE__) . '../views/';
+        $base_view_path = plugin_dir_path(__FILE__) . '../views/invoice/';
         switch ($roleId) {
             case 1: $view_name = 'invoice-view.php'; break;
             case 2: $view_name = 'invoice-view.php'; break;

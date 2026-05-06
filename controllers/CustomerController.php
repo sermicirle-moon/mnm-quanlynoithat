@@ -8,7 +8,7 @@ class CustomerController {
         $customers = $repo->getAll();
         $roleId = $_SESSION['qln_role_id'];
 
-        $base_view_path = plugin_dir_path(__FILE__) . '../views/';
+        $base_view_path = plugin_dir_path(__FILE__) . '../views/customer/';
         switch ($roleId) {
             case 1: $view_name = 'customer-view.php'; break;
             case 2: $view_name = 'customer-view.php'; break;

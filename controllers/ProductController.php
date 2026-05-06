@@ -10,7 +10,7 @@ class ProductController {
         $userName = $_SESSION['qln_user_name'];
 
         // 1. Xác định đường dẫn file view nội dung
-        $base_view_path = plugin_dir_path(__FILE__) . '../views/';
+        $base_view_path = plugin_dir_path(__FILE__) . '../views/product/';
         switch ($roleId) {
             case 1: $view_name = 'product-view.php'; break;
             case 2: $view_name = 'product-view.php'; break;
