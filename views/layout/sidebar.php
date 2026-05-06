@@ -12,7 +12,7 @@ $menus = [
     ['title' => 'Customers',   'slug' => 'qln-customers',  'icon' => 'fa-users',                 'roles' => [1, 2]],
     ['title' => 'Suppliers', 'slug' => 'qln-suppliers',  'icon' => 'fa-truck-field',           'roles' => [1, 3]],
     ['title' => 'Invoices',      'slug' => 'qln-invoices',   'icon' => 'fa-file-invoice-dollar',   'roles' => [1, 2]],
-    ['title' => 'Stock In',     'slug' => 'qln-warehouse',  'icon' => 'fa-file-import',           'roles' => [1, 3]],
+    ['title' => 'Stock In',     'slug' => 'qln-nhap-hang',  'icon' => 'fa-file-import',           'roles' => [1, 3]],
     ['title' => 'Stock Out',     'slug' => 'qln-stock-out',  'icon' => 'fa-file-export',           'roles' => [1, 3]],
     ['title' => 'Staff',    'slug' => 'qln-staff',      'icon' => 'fa-user-tie',              'roles' => [1]],
     ['title' => 'Reports',      'slug' => 'qln-reports',    'icon' => 'fa-chart-line',            'roles' => [1]],
