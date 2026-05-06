@@ -6,6 +6,19 @@ class InvoiceController {
         }
         $repo = new InvoiceRepository();
         $invoices = $repo->getAll();
-        include plugin_dir_path(__FILE__) . '../views/Sale/invoice-view.php';
+        $roleId = $_SESSION['qln_role_id'];
+
+        $base_view_path = plugin_dir_path(__FILE__) . '../views/invoice/';
+        switch ($roleId) {
+            case 1: $view_name = 'invoice-view.php'; break;
+            case 2: $view_name = 'invoice-view.php'; break;
+            default: $view_name = 'invoice-view.php';
+        }
+
+        // 2. Gán vào biến $view_content để masterlayout.php sử dụng
+        $view_content = $base_view_path . $view_name;
+
+        // 3. Gọi Layout chính (Layout này sẽ tự include Sidebar và $view_content)
+        include $base_view_path . 'layout/masterlayout.php';
     }
 }
