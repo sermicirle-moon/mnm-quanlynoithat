@@ -8,7 +8,7 @@ class MenuController {
         );
 
         // Các sub-menu ẩn (dùng để định tuyến trang Đăng nhập / Đăng ký mà không hiện lên menu WP)
-        add_submenu_page('qln-dashboard', 'Nhập hàng', 'Nhập hàng', 'read', 'qln-nhap-hang', [$this, 'renderNhapHang']);
+        add_submenu_page(null, 'Nhập hàng', 'Nhập hàng', 'read', 'qln-nhap-hang', [$this, 'renderNhapHang']);
         add_submenu_page(null, 'Sản phẩm', 'Sản phẩm', 'read', 'qln-products', [$this, 'renderProducts']);
         add_submenu_page(null, 'Khách hàng', 'Khách hàng', 'read', 'qln-customers', [$this, 'renderCustomers']);
         add_submenu_page(null, 'Hóa đơn', 'Hóa đơn', 'read', 'qln-invoices', [$this, 'renderInvoices']);

@@ -21,7 +21,7 @@ class DashboardController {
                 default: $view_name = 'dashboard/admin-view.php';
             }
             $view_content = $view_path . $view_name;
-            include plugin_dir_path(__FILE__) . '../layout/masterlayout.php';
+            include plugin_dir_path(__FILE__) . '../views/layout/masterlayout.php';
         }
     }
 
