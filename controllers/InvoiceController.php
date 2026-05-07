@@ -11,34 +11,21 @@ class InvoiceController {
 
     public function index() {
         if (!isset($_SESSION['qln_user_id'])) {
-            wp_redirect(admin_url('admin.php?page=qln-login'));
-            exit;
+            wp_redirect(admin_url('admin.php?page=qln-login')); exit;
         }
 
         $action = $_GET['action'] ?? 'list';
 
         switch ($action) {
-            case 'create':
-                $this->showForm();
-                break;
-            case 'store':
-                $this->store();
-                break;
-            case 'edit':
-                $this->showForm($_GET['id']);
-                break;
-            case 'update':
-                $this->update($_GET['id']);
-                break;
-            case 'cancel':
-                $this->cancel($_GET['id']);
-                break;
-            case 'view':
-                $this->view($_GET['id']);
-                break;
-            default:
-                $this->list();
-                break;
+            case 'create': $this->showForm(); break;
+            case 'store': $this->store(); break;
+            case 'edit': $this->showForm($_GET['id']); break;
+            case 'update': $this->update($_GET['id']); break;
+            case 'cancel': $this->cancel($_GET['id']); break;
+            case 'mark_paid': $this->markPaid($_GET['id']); break; // <-- MỚI
+            case 'refund': $this->refund($_GET['id']); break;       // <-- MỚI
+            case 'view': $this->view($_GET['id']); break;
+            default: $this->list(); break;
         }
     }
 
@@ -62,27 +49,15 @@ class InvoiceController {
         $details = [];
         if ($id) {
             $invoice = $this->repo->getById($id);
-        
-        if (!$invoice) {
-            $_SESSION['qln_error'] = "Hóa đơn không tồn tại!";
-            wp_redirect(admin_url('admin.php?page=qln-invoices'));
-            exit;
-        }
-        if ($invoice->trang_thai == 'Đã hủy' || $invoice->trang_thai == 'Đã thanh toán') {
-            $_SESSION['qln_error'] = "Hóa đơn đã " . $invoice->trang_thai . ", không thể sửa!";
-            wp_redirect(admin_url('admin.php?page=qln-invoices'));
-            exit;
-        }
-        
-        if ($id) {
-            $invoice = $this->repo->getById($id);
             if (!$invoice) {
                 $_SESSION['qln_error'] = "Hóa đơn không tồn tại!";
-                wp_redirect(admin_url('admin.php?page=qln-invoices'));
-                exit;
+                wp_redirect(admin_url('admin.php?page=qln-invoices')); exit;
+            }
+            if ($invoice->trang_thai == 'Đã hủy' || $invoice->trang_thai == 'Hoàn tiền' || $invoice->trang_thai == 'Đã thanh toán') {
+                $_SESSION['qln_error'] = "Hóa đơn đã " . $invoice->trang_thai . ", không thể sửa đổi nội dung!";
+                wp_redirect(admin_url('admin.php?page=qln-invoices')); exit;
             }
             $details = $this->detailRepo->getByInvoiceId($id);
-        }
         }
         $customers = (new CustomerRepository())->getAll();
         $products = $this->productRepo->getAvailableProducts();
@@ -92,17 +67,10 @@ class InvoiceController {
         include $base_view_path . 'layout/masterlayout.php';
     }
 
-    /**
-     * Kiểm tra tồn kho cho các sản phẩm trong mảng chi tiết mới
-     * Có tính đến chi tiết cũ (nếu là update) để trừ lượng đã tồn tại
-     * @param int|null $invoice_id (null khi thêm mới)
-     * @param array $new_details (dạng [['san_pham_id'=>x, 'so_luong'=>y], ...])
-     * @return array ['valid'=>true/false, 'errors'=>[]]
-     */
+    // Kiểm tra tồn kho (Giữ nguyên logic cực kỳ chặt chẽ của bạn)
     private function checkStockAvailability($invoice_id, $new_details) {
         $errors = [];
         $seen = [];
-        // Nhóm số lượng mới theo sản phẩm
         $new_qty_map = [];
         foreach ($new_details as $item) {
             $pid = intval($item['san_pham_id']);
@@ -112,16 +80,12 @@ class InvoiceController {
             if ($pid <= 0 || $qty <= 0) continue;
             if (isset($seen[$pid])) {
                 $product = $this->productRepo->getById($pid);
-                $errors[] = "Sản phẩm \"{$product->ten_sp}\" đã được thêm nhiều lần. Vui lòng gộp số lượng thành một dòng.";
+                $errors[] = "Sản phẩm \"{$product->ten_sp}\" bị trùng. Vui lòng gộp dòng.";
             }
             $seen[$pid] = true;
         }
-        if (!empty($errors)) {
-            return ['valid' => false, 'errors' => $errors];
-        }
-            
+        if (!empty($errors)) return ['valid' => false, 'errors' => $errors];
 
-        // Lấy số lượng cũ đã dùng (nếu có)
         $old_qty_map = [];
         if ($invoice_id) {
             $old_details = $this->detailRepo->getByInvoiceId($invoice_id);
@@ -130,24 +94,18 @@ class InvoiceController {
             }
         }
 
-        // Kiểm tra từng sản phẩm
         foreach ($new_qty_map as $pid => $new_qty) {
             $stock = $this->productRepo->getStock($pid);
             $old_qty = isset($old_qty_map[$pid]) ? $old_qty_map[$pid] : 0;
-            $needed = $new_qty - $old_qty; // lượng thực tế cần lấy từ kho (âm nếu trả về)
+            $needed = $new_qty - $old_qty; 
             if ($needed > 0 && $stock < $needed) {
                 $product = $this->productRepo->getById($pid);
-                $errors[] = "Sản phẩm \"{$product->ten_sp}\" chỉ còn {$stock} cái, nhưng bạn đặt thêm {$needed} cái.";
+                $errors[] = "Sản phẩm \"{$product->ten_sp}\" chỉ còn {$stock} cái trong kho.";
             }
         }
         return ['valid' => empty($errors), 'errors' => $errors];
     }
 
-    /**
-     * Cập nhật tồn kho dựa trên chênh lệch giữa chi tiết cũ và mới
-     * @param int $invoice_id
-     * @param array $new_details
-     */
     private function updateInventory($invoice_id, $new_details) {
         $old_details = $this->detailRepo->getByInvoiceId($invoice_id);
         $old_map = [];
@@ -162,14 +120,12 @@ class InvoiceController {
             $new_map[$pid] += $qty;
         }
 
-        // Xử lý các sản phẩm bị xóa hoàn toàn trong chi tiết mới
         foreach ($old_map as $pid => $old_qty) {
             if (!isset($new_map[$pid])) {
-                $this->productRepo->increaseStock($pid, $old_qty); // trả lại toàn bộ
+                $this->productRepo->increaseStock($pid, $old_qty); 
             }
         }
 
-        // Xử lý các sản phẩm có thay đổi
         $all_pids = array_unique(array_merge(array_keys($old_map), array_keys($new_map)));
         foreach ($all_pids as $pid) {
             $old_qty = $old_map[$pid] ?? 0;
@@ -183,9 +139,6 @@ class InvoiceController {
         }
     }
 
-    /**
-     * Hoàn lại toàn bộ số lượng của hóa đơn (khi hủy hoặc xóa)
-     */
     private function returnInventory($invoice_id) {
         $old_details = $this->detailRepo->getByInvoiceId($invoice_id);
         foreach ($old_details as $item) {
@@ -195,79 +148,65 @@ class InvoiceController {
 
     private function store() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') return;
-
+        
         $products_input = $_POST['products'] ?? [];
         $new_details = [];
         foreach ($products_input as $item) {
             if (empty($item['san_pham_id']) || empty($item['so_luong'])) continue;
-            $new_details[] = [
-                'san_pham_id' => intval($item['san_pham_id']),
-                'so_luong'    => intval($item['so_luong'])
-            ];
+            $new_details[] = ['san_pham_id' => intval($item['san_pham_id']), 'so_luong' => intval($item['so_luong'])];
         }
-        foreach ($new_details as $item) {
-            $product = $this->productRepo->getById($item['san_pham_id']);
-            if (!$product || $product->trang_thai == 'Không bán') {
-                $_SESSION['qln_error'] = "Sản phẩm '{$product->ten_sp}' không được phép bán!";
-                wp_redirect(admin_url('admin.php?page=qln-invoices&action=create'));
-                exit;
+
+        $hinh_thuc_giao = sanitize_text_field($_POST['trang_thai_giao'] ?? 'Chờ giao');
+
+        // Check tồn kho nếu lấy hàng tại quầy
+        if ($hinh_thuc_giao === 'Tại quầy') {
+            $check = $this->checkStockAvailability(null, $new_details);
+            if (!$check['valid']) {
+                $_SESSION['qln_error'] = implode('<br>', $check['errors']);
+                wp_redirect(admin_url('admin.php?page=qln-invoices&action=create')); exit;
             }
         }
 
-        // Kiểm tra tồn kho
-        $check = $this->checkStockAvailability(null, $new_details);
-        if (!$check['valid']) {
-            $_SESSION['qln_error'] = implode('<br>', $check['errors']);
-            wp_redirect(admin_url('admin.php?page=qln-invoices&action=create'));
-            exit;
-        }
-
-        // Lưu hóa đơn
         $data = [
-            'ma_hd'          => sanitize_text_field($_POST['ma_hd']),
-            'khach_hang_id'  => intval($_POST['khach_hang_id']),
-            'trang_thai'     => sanitize_text_field($_POST['trang_thai']),
-            'ngay_tao'       => date('Y-m-d H:i:s'),
-            'tong_tien'      => 0
+            'ma_hd'           => sanitize_text_field($_POST['ma_hd']),
+            'khach_hang_id'   => intval($_POST['khach_hang_id']),
+            'trang_thai'      => sanitize_text_field($_POST['trang_thai']),
+            'trang_thai_giao' => $hinh_thuc_giao,
+            'ngay_tao'        => date('Y-m-d H:i:s'),
+            'tong_tien'       => 0
         ];
-        $result = $this->repo->create($data);
-        if (!$result) {
-            $_SESSION['qln_error'] = "Thêm hóa đơn thất bại!";
-            wp_redirect(admin_url('admin.php?page=qln-invoices'));
-            exit;
+        
+        if ($this->repo->create($data)) {
+            $invoice_id = $this->repo->getLastInsertId();
+            $this->saveInvoiceDetails($invoice_id, $new_details);
+            $this->repo->updateTotalAmount($invoice_id); 
+            
+            // FIX LỖI: Trừ kho trực tiếp cho đơn "Tại quầy"
+            if ($hinh_thuc_giao === 'Tại quầy') {
+                foreach ($new_details as $item) {
+                    $this->productRepo->decreaseStock($item['san_pham_id'], $item['so_luong']);
+                }
+            }
+            $_SESSION['qln_success'] = "Thêm hóa đơn thành công!";
         }
-        $invoice_id = $this->repo->getLastInsertId();
-
-        // Lưu chi tiết
-        $this->saveInvoiceDetails($invoice_id, $new_details);
-
-        // Cập nhật tổng tiền và trừ kho
-        // $this->repo->updateTotalAmount($invoice_id);
-        $this->updateInventory($invoice_id, $new_details);
-
-        $_SESSION['qln_success'] = "Thêm hóa đơn thành công!";
-        wp_redirect(admin_url('admin.php?page=qln-invoices'));
-        exit;
+        wp_redirect(admin_url('admin.php?page=qln-invoices')); exit;
     }
-
-
 
     private function saveInvoiceDetails($invoice_id, $products_array) {
         foreach ($products_array as $item) {
-            if (empty($item['san_pham_id']) || empty($item['so_luong'])) continue;
-            $san_pham_id = intval($item['san_pham_id']);
-            $so_luong = intval($item['so_luong']);
-
-            // Lấy giá bán hiện tại của sản phẩm
-            $product = $this->productRepo->getById($san_pham_id);
+            $product = $this->productRepo->getById($item['san_pham_id']);
             if (!$product) continue;
+            
+            $so_luong = intval($item['so_luong']);
             $don_gia = $product->gia_ban;
+            $thanh_tien = $so_luong * $don_gia; // TÍNH TOÁN THÀNH TIỀN
 
             $this->detailRepo->create([
                 'hoa_don_id'   => $invoice_id,
-                'san_pham_id'  => $san_pham_id,
+                'san_pham_id'  => $item['san_pham_id'],
                 'so_luong'     => $so_luong,
-                'don_gia'      => $don_gia
+                'don_gia'      => $don_gia,
+                'thanh_tien'   => $thanh_tien // LƯU VÀO DATABASE
             ]);
         }
     }
@@ -275,21 +214,10 @@ class InvoiceController {
     private function update($id) {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') return;
 
-        $old_status = $this->repo->getStatus($id);
         $new_status = sanitize_text_field($_POST['trang_thai']);
-
-        // Cập nhật thông tin chung
-        $data = [
-            'ma_hd'          => sanitize_text_field($_POST['ma_hd']),
-            'khach_hang_id'  => intval($_POST['khach_hang_id']),
-            'trang_thai'     => $new_status
-        ];
-        $this->repo->update($id, $data);
-
-        // Lấy chi tiết cũ và mới
-        $old_details = $this->detailRepo->getByInvoiceId($id);
         $products_input = $_POST['products'] ?? [];
         $new_details = [];
+
         foreach ($products_input as $item) {
             if (empty($item['san_pham_id']) || empty($item['so_luong'])) continue;
             $new_details[] = [
@@ -297,87 +225,76 @@ class InvoiceController {
                 'so_luong'    => intval($item['so_luong'])
             ];
         }
-        foreach ($new_details as $item) {
-            $product = $this->productRepo->getById($item['san_pham_id']);
-            if (!$product || $product->trang_thai == 'Không bán') {
-                $_SESSION['qln_error'] = "Sản phẩm '{$product->ten_sp}' không được phép bán!";
-                wp_redirect(admin_url('admin.php?page=qln-invoices&action=create'));
-                exit;
-            }
-        }
-        // Nếu hủy hóa đơn (chuyển từ trạng thái khác thành "Đã hủy")
-        if ($old_status !== 'Đã hủy' && $new_status === 'Đã hủy') {
-            error_log("Attempting to cancel invoice $id");
-            // Không cần lưu chi tiết mới vì đã hủy
-            $_SESSION['qln_success'] = "Hóa đơn đã được hủy, số lượng sản phẩm đã được hoàn lại kho.";
-            wp_redirect(admin_url('admin.php?page=qln-invoices'));
-            exit;
+
+        // Logic bảo vệ: Nếu trạng thái là Hủy/Hoàn tiền thì trả hàng và không cho sửa chi tiết nữa
+        if ($new_status === 'Đã hủy' || $new_status === 'Hoàn tiền') {
+            $this->returnInventory($id);
+            $this->repo->update($id, ['trang_thai' => $new_status]);
+            $_SESSION['qln_success'] = "Hóa đơn đã được chuyển trạng thái và hoàn tồn kho.";
+            wp_redirect(admin_url('admin.php?page=qln-invoices')); exit;
         }
 
-        // Nếu không phải hủy, tiến hành kiểm tra tồn kho (dựa trên chênh lệch)
-        $check = $this->checkStockAvailability($id, $new_details);
-        if (!$check['valid']) {
-            $_SESSION['qln_error'] = implode('<br>', $check['errors']);
-            wp_redirect(admin_url("admin.php?page=qln-invoices&action=edit&id={$id}"));
-            exit;
-        }
-
-        // Xóa chi tiết cũ và lưu chi tiết mới
-        $this->detailRepo->deleteByInvoiceId($id);
+        $this->detailRepo->deleteByInvoiceId($id); // Xóa để lưu mới
         $this->saveInvoiceDetails($id, $new_details);
-
-        // Cập nhật tổng tiền và điều chỉnh tồn kho
-        // $this->repo->updateTotalAmount($id);
+        $this->repo->updateTotalAmount($id); // ĐÃ MỞ KHÓA: Đảm bảo tổng tiền khớp với sản phẩm hiện tại
         $this->updateInventory($id, $new_details);
 
         $_SESSION['qln_success'] = "Cập nhật hóa đơn thành công!";
-        wp_redirect(admin_url('admin.php?page=qln-invoices'));
-        exit;
+        wp_redirect(admin_url('admin.php?page=qln-invoices')); exit;
+    }
+
+    // --- CÁC HÀM XỬ LÝ TRẠNG THÁI NHANH ---
+
+    private function markPaid($id) {
+        $invoice = $this->repo->getById($id);
+        if ($invoice && $invoice->trang_thai === 'Chờ thanh toán') {
+            $this->repo->update($id, ['trang_thai' => 'Đã thanh toán']);
+            $_SESSION['qln_success'] = "Hóa đơn đã được ghi nhận thanh toán! Doanh thu đã được cộng.";
+        }
+        wp_redirect(admin_url('admin.php?page=qln-invoices')); exit;
     }
 
     private function cancel($id) {
-        global $wpdb;
-
         $invoice = $this->repo->getById($id);
-        if (!$invoice) {
-            $_SESSION['qln_error'] = "Hóa đơn không tồn tại!";
-            wp_redirect(admin_url('admin.php?page=qln-invoices'));
-            exit;
-        }
-
-        // Kiểm tra nếu đã hủy rồi
-        if ($invoice->trang_thai === 'Đã hủy') {
-            $_SESSION['qln_error'] = "Hóa đơn này đã được hủy trước đó.";
-            wp_redirect(admin_url('admin.php?page=qln-invoices'));
-            exit;
-        }
-
-        // Cập nhật trạng thái hóa đơn
-        $result = $this->repo->update($id, ['trang_thai' => 'Đã hủy']);
-
-        if ($result === false) {
-            $_SESSION['qln_error'] = "Lỗi cập nhật trạng thái hóa đơn: " . $wpdb->last_error;
-        } elseif ($result == 0) {
-            $_SESSION['qln_error'] = "Không có thay đổi nào (có thể trạng thái đã là 'Đã hủy' từ trước).";
+        if ($invoice && $invoice->trang_thai === 'Chờ thanh toán') {
+            // Cập nhật trạng thái
+            $this->repo->update($id, ['trang_thai' => 'Đã hủy', 'trang_thai_giao' => 'Đã hủy']);
+            
+            // Nếu đơn này trước đó đã lấy hàng tại quầy thì phải HOÀN KHO
+            if ($invoice->trang_thai_giao === 'Tại quầy') {
+                $this->returnInventory($id);
+                $_SESSION['qln_success'] = "Đã hủy hóa đơn và hoàn trả hàng về kho.";
+            } else {
+                $_SESSION['qln_success'] = "Đã hủy hóa đơn thành công.";
+            }
         } else {
-            $_SESSION['qln_success'] = "Hóa đơn đã được hủy. Tồn kho đã được hoàn trả.";
+            $_SESSION['qln_error'] = "Chỉ có thể hủy hóa đơn đang Chờ thanh toán.";
         }
-        error_log("Cancel invoice $id, result = " . var_export($result, true));
-        error_log("Last error: " . $wpdb->last_error);
-        wp_redirect(admin_url('admin.php?page=qln-invoices'));
-        exit;
+        wp_redirect(admin_url('admin.php?page=qln-invoices')); exit;
     }
+
+    private function refund($id) {
+        $invoice = $this->repo->getById($id);
+        if ($invoice && $invoice->trang_thai === 'Đã thanh toán') {
+            $this->repo->update($id, ['trang_thai' => 'Hoàn tiền']);
+            
+            // Nếu đơn này khách đã mang hàng về (Tại quầy) thì thu hồi hàng vào kho
+            if ($invoice->trang_thai_giao === 'Tại quầy') {
+                $this->returnInventory($id); 
+                $this->repo->update($id, ['trang_thai_giao' => 'Đã hoàn trả']);
+                $_SESSION['qln_success'] = "Đã hoàn tiền & thu hồi hàng về kho.";
+            } else {
+                $_SESSION['qln_success'] = "Đã hoàn tiền thành công (Hàng chưa xuất nên không cần hoàn kho).";
+            }
+        }
+        wp_redirect(admin_url('admin.php?page=qln-invoices')); exit;
+    }
+
     private function view($id) {
         $invoice = $this->repo->getById($id);
-        if (!$invoice) {
-            $_SESSION['qln_error'] = "Hóa đơn không tồn tại!";
-            wp_redirect(admin_url('admin.php?page=qln-invoices'));
-            exit;
-        }
         $details = $this->detailRepo->getByInvoiceId($id);
         $customers = (new CustomerRepository())->getAll();
-        $products = $this->productRepo->getAll();
-
+        
         $base_view_path = plugin_dir_path(__FILE__) . '../views/';
         $view_content = $base_view_path . 'invoice/invoice-view-detail.php';
         include $base_view_path . 'layout/masterlayout.php';

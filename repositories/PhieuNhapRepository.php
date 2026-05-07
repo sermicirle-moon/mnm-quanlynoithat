@@ -71,10 +71,13 @@ class PhieuNhapRepository {
     // Lấy số liệu thống kê cho 4 Cards trên Dashboard
     public function getStats() {
         global $wpdb;
-        
+
         $total_phieu = $wpdb->get_var("SELECT COUNT(id) FROM {$this->table_pn}");
-        $total_value = $wpdb->get_var("SELECT SUM(tong_tien) FROM {$this->table_pn}");
-        $cho_thanh_toan = $wpdb->get_var("SELECT COUNT(id) FROM {$this->table_pn} WHERE trang_thai = 'Chưa thanh toán'");
+
+        $total_value = $wpdb->get_var("SELECT SUM(tong_tien) FROM {$this->table_pn} WHERE trang_thai = 'Đã nhập kho'");
+
+        $cho_thanh_toan = $wpdb->get_var("SELECT COUNT(id) FROM {$this->table_pn} WHERE trang_thai = 'Chưa thanh toán' OR trang_thai = 'Chờ xử lý'");
+        
         $ncc_moi = $wpdb->get_var("SELECT COUNT(id) FROM {$this->table_ncc} WHERE MONTH(ngay_tao) = MONTH(CURRENT_DATE())");
 
         return [
