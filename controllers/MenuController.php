@@ -19,10 +19,11 @@ class MenuController {
         add_submenu_page(null, 'Duyệt PN', 'Duyệt PN', 'read', 'qln-nhap-hang-approve', [$this, 'renderNhapHangApprove']);
         add_submenu_page(null, 'Xóa PN', 'Xóa PN', 'read', 'qln-nhap-hang-delete', [$this, 'renderNhapHangDelete']);
         add_submenu_page(null, 'Xem PN', 'Xem PN', 'read', 'qln-nhap-hang-view', [$this, 'renderNhapHangView']);
-        
-        // ---> MỚI THÊM VÀO: 2 LINK CHO VIỆC SỬA PHIẾU <---
         add_submenu_page(null, 'Sửa PN', 'Sửa PN', 'read', 'qln-nhap-hang-edit', [$this, 'renderNhapHangEdit']);
         add_submenu_page(null, 'Cập nhật PN', 'Cập nhật PN', 'read', 'qln-nhap-hang-update', [$this, 'renderNhapHangUpdate']);
+
+        //các sub-menu ẩn cho Xuất kho
+        add_submenu_page(null, 'Xuất kho', 'Xuất kho', 'read', 'qln-xuat-kho', [$this, 'renderXuatKho']);
         
         // 3. Các trang hệ thống
         add_submenu_page(null, 'Đăng nhập', 'Đăng nhập', 'read', 'qln-login', [$this, 'renderLogin']);
@@ -59,6 +60,7 @@ class MenuController {
     public function renderRegister() {
         include plugin_dir_path(__FILE__) . '../views/register-view.php';
     }
+    
     public function renderNhapHang() {
         require_once plugin_dir_path(__FILE__) . 'PhieuNhapController.php';
         $controller = new PhieuNhapController();
@@ -81,22 +83,30 @@ class MenuController {
         require_once plugin_dir_path(__FILE__) . 'PhieuNhapController.php';
         (new PhieuNhapController())->approve();
     }
+    
     public function renderNhapHangDelete() {
         require_once plugin_dir_path(__FILE__) . 'PhieuNhapController.php';
         (new PhieuNhapController())->delete();
     }
+    
     public function renderNhapHangView() {
         require_once plugin_dir_path(__FILE__) . 'PhieuNhapController.php';
         (new PhieuNhapController())->view();
     }
 
-    // ---> MỚI THÊM VÀO: 2 HÀM GỌI CHỨC NĂNG SỬA <---
     public function renderNhapHangEdit() {
         require_once plugin_dir_path(__FILE__) . 'PhieuNhapController.php';
         (new PhieuNhapController())->edit();
     }
+    
     public function renderNhapHangUpdate() {
         require_once plugin_dir_path(__FILE__) . 'PhieuNhapController.php';
         (new PhieuNhapController())->update();
+    }
+
+    // --- HÀM GỌI CONTROLLER XUẤT KHO ---
+    public function renderXuatKho() {
+        require_once plugin_dir_path(__FILE__) . 'PhieuXuatController.php';
+        (new PhieuXuatController())->index();
     }
 }

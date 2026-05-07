@@ -17,6 +17,31 @@ function qln_start_session() {
     ob_start();
 }
 
+// AJAX: Lấy danh sách Hóa đơn "Chờ giao" để Gom đơn vào Phiếu xuất
+add_action('wp_ajax_qln_get_pending_invoices', 'qln_get_pending_invoices_callback');
+function qln_get_pending_invoices_callback() {
+    global $wpdb;
+    $kh_id = isset($_POST['khach_hang_id']) ? intval($_POST['khach_hang_id']) : 0;
+    
+    // Chỉ lấy hóa đơn chưa hủy, chưa hoàn tiền và chưa có ai giao
+    $sql = "SELECT id, ma_hd, tong_tien, ngay_tao 
+            FROM {$wpdb->prefix}qln_hoa_don 
+            WHERE khach_hang_id = %d 
+            AND trang_thai != 'Đã hủy' AND trang_thai != 'Hoàn tiền' 
+            AND (trang_thai_giao = 'Chờ giao' OR trang_thai_giao IS NULL)";
+            
+    $invoices = $wpdb->get_results($wpdb->prepare($sql, $kh_id), ARRAY_A);
+    
+    // Format lại ngày tháng cho đẹp trước khi gửi về giao diện
+    if ($invoices) {
+        foreach ($invoices as &$inv) {
+            $inv['ngay_tao'] = date('d/m/Y H:i', strtotime($inv['ngay_tao']));
+        }
+    }
+    
+    wp_send_json_success($invoices);
+}
+
 // 1. Nhúng Models
 require_once plugin_dir_path(__FILE__) . 'models/User.php';
 require_once plugin_dir_path(__FILE__) . 'models/Product.php';

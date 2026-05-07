@@ -22,12 +22,24 @@ $actionUrl = $isEdit ? "?page=qln-invoices&action=update&id={$invoice->id}" : "?
                         <option value="<?php echo $c->id; ?>" <?php echo ($isEdit && $invoice->khach_hang_id == $c->id) ? 'selected' : ''; ?>><?php echo esc_html($c->ten_kh . ' (' . $c->ma_kh . ')'); ?></option>
                         <?php endforeach; ?>
                     </select></div>
-                <div><label class="block text-sm font-medium text-gray-700 mb-1">Trạng thái</label>
-                    <select name="trang_thai" class="w-full px-4 py-2 border rounded-lg">
-                        <option value="Đang xử lý" <?php echo ($isEdit && $invoice->trang_thai == 'Đang xử lý') ? 'selected' : ''; ?>>Đang xử lý</option>
-                        <option value="Chờ thanh toán" <?php echo ($isEdit && $invoice->trang_thai == 'Chờ thanh toán') ? 'selected' : ''; ?>>Chờ thanh toán</option>
-                        <option value="Đã thanh toán" <?php echo ($isEdit && $invoice->trang_thai == 'Đã thanh toán') ? 'selected' : ''; ?>>Đã thanh toán</option>
-                    </select></div>
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-2">Trạng thái khởi tạo</label>
+                    <select name="trang_thai" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-green-600 outline-none font-bold">
+                        <option value="Chờ thanh toán" <?php echo ($isEdit && $invoice->trang_thai == 'Chờ thanh toán') ? 'selected' : ''; ?>>Chờ thanh toán (Ghi nợ)</option>
+                        <option value="Đã thanh toán" <?php echo ($isEdit && $invoice->trang_thai == 'Đã thanh toán') ? 'selected' : ''; ?>>Đã thanh toán (Thu tiền ngay)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-black text-gray-700 mb-2 uppercase tracking-wider">Hình thức nhận hàng</label>
+                    <select name="trang_thai_giao" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-green-600 outline-none font-bold">
+                        <option value="Chờ giao" <?php echo ($isEdit && $invoice->trang_thai_giao == 'Chờ giao') ? 'selected' : ''; ?>>
+                            🚚 Công ty đi giao (Qua bộ phận Xuất Kho)
+                        </option>
+                        <option value="Tại quầy" <?php echo ($isEdit && $invoice->trang_thai_giao == 'Tại quầy') ? 'selected' : ''; ?>>
+                            🏬 Nhận hàng tại quầy (Trừ kho ngay lập tức)
+                        </option>
+                    </select>
+                </div>
             </div>
         </div>
 

@@ -8,14 +8,14 @@ $current_page = $_GET['page'] ?? '';
 // Cấu hình Menu theo Role (1: Admin, 2: Sale, 3: Warehouse)
 $menus = [
     ['title' => 'Dashboard',    'slug' => 'qln-dashboard',  'icon' => 'fa-chart-pie',             'roles' => [1, 2, 3]],
-    ['title' => 'Product',     'slug' => 'qln-products',   'icon' => 'fa-box',                   'roles' => [1, 2, 3]],
-    ['title' => 'Customers',   'slug' => 'qln-customers',  'icon' => 'fa-users',                 'roles' => [1, 2]],
-    ['title' => 'Suppliers', 'slug' => 'qln-suppliers',  'icon' => 'fa-truck-field',           'roles' => [1, 3]],
-    ['title' => 'Shipping', 'slug' => 'qln-shipping',  'icon' => 'fa-shipping-fast',           'roles' => [1]],
-    ['title' => 'Invoices',      'slug' => 'qln-invoices',   'icon' => 'fa-file-invoice-dollar',   'roles' => [1, 2]],
+    ['title' => 'Product',      'slug' => 'qln-products',   'icon' => 'fa-box',                   'roles' => [1, 2, 3]],
+    ['title' => 'Customers',    'slug' => 'qln-customers',  'icon' => 'fa-users',                 'roles' => [1, 2]],
+    ['title' => 'Suppliers',    'slug' => 'qln-suppliers',  'icon' => 'fa-truck-field',           'roles' => [1, 3]],
+    ['title' => 'Shipping',     'slug' => 'qln-shipping',   'icon' => 'fa-shipping-fast',         'roles' => [1]],
+    ['title' => 'Invoices',     'slug' => 'qln-invoices',   'icon' => 'fa-file-invoice-dollar',   'roles' => [1, 2]],
     ['title' => 'Stock In',     'slug' => 'qln-nhap-hang',  'icon' => 'fa-file-import',           'roles' => [1, 3]],
-    ['title' => 'Stock Out',     'slug' => 'qln-stock-out',  'icon' => 'fa-file-export',           'roles' => [1, 3]],
-    ['title' => 'Staff',    'slug' => 'qln-staff',      'icon' => 'fa-user-tie',              'roles' => [1]],
+    ['title' => 'Stock Out',    'slug' => 'qln-xuat-kho',   'icon' => 'fa-file-export',           'roles' => [1, 3]], // <-- ĐÃ SỬA CHỖ NÀY
+    ['title' => 'Staff',        'slug' => 'qln-staff',      'icon' => 'fa-user-tie',              'roles' => [1]],
     ['title' => 'Reports',      'slug' => 'qln-reports',    'icon' => 'fa-chart-line',            'roles' => [1]],
 ];
 ?>
