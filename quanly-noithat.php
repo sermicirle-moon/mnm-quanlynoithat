@@ -22,11 +22,14 @@ require_once plugin_dir_path(__FILE__) . 'models/User.php';
 require_once plugin_dir_path(__FILE__) . 'models/Product.php';
 require_once plugin_dir_path(__FILE__) . 'models/Customer.php';
 require_once plugin_dir_path(__FILE__) . 'models/Invoice.php';
+require_once plugin_dir_path(__FILE__) . 'models/InvoiceDetail.php';
+
 // 2. Nhúng Repositories
 require_once plugin_dir_path(__FILE__) . 'repositories/UserRepository.php';
 require_once plugin_dir_path(__FILE__) . 'repositories/ProductRepository.php';
 require_once plugin_dir_path(__FILE__) . 'repositories/CustomerRepository.php';
 require_once plugin_dir_path(__FILE__) . 'repositories/InvoiceRepository.php';
+require_once plugin_dir_path(__FILE__) . 'repositories/InvoiceDetailRepository.php';
 
 // 3. Nhúng Controllers
 require_once plugin_dir_path(__FILE__) . 'controllers/AuthController.php';
@@ -35,6 +38,7 @@ require_once plugin_dir_path(__FILE__) . 'controllers/MenuController.php';
 require_once plugin_dir_path(__FILE__) . 'controllers/ProductController.php';
 require_once plugin_dir_path(__FILE__) . 'controllers/CustomerController.php';
 require_once plugin_dir_path(__FILE__) . 'controllers/InvoiceController.php';
+
 
 // Khởi chạy Menu
 $menuController = new MenuController();
@@ -45,3 +49,27 @@ add_action('admin_init', function() {
     $authController = new AuthController();
     $authController->handleRequest();
 });
+add_action('wp_ajax_qln_get_product_stock', function() {
+    if (!isset($_POST['product_id'])) wp_die('0');
+    $product_id = intval($_POST['product_id']);
+    $repo = new ProductRepository();
+    $stock = $repo->getStock($product_id);
+    echo $stock;
+    wp_die();
+});
+/**
+ * Định dạng số tiền rút gọn (K, M, B)
+ */
+function qln_format_compact_money($amount) {
+    if ($amount >= 1e9) {
+        return round($amount / 1e9, 1) . ' B';
+    }
+    if ($amount >= 1e6) {
+        return round($amount / 1e6, 1) . ' M';
+    }
+    if ($amount >= 1e3) {
+        return round($amount / 1e3, 0) . 'K';
+    }
+    return (string)$amount;
+}
+?>
