@@ -187,7 +187,17 @@ class InvoiceController {
                     $this->productRepo->decreaseStock($item['san_pham_id'], $item['so_luong']);
                 }
             }
+             // *** CẬP NHẬT KHÁCH HÀNG NẾU TRẠNG THÁI LÀ "ĐÃ THANH TOÁN" ***
+            if ($data['trang_thai'] === 'Đã thanh toán') {
+                $invoice = $this->repo->getById($invoice_id); // lấy lại để có tổng tiền
+                $customerRepo = new CustomerRepository();
+                $customerRepo->updateTotalSpent($invoice->khach_hang_id, $invoice->tong_tien, true);
+                $customerRepo->updateOrderCount($invoice->khach_hang_id, true);
+            }
+
             $_SESSION['qln_success'] = "Thêm hóa đơn thành công!";
+        }else{
+            $_SESSION['qln_error'] = "Thêm hóa đơn thất bại!";
         }
         wp_redirect(admin_url('admin.php?page=qln-invoices')); exit;
     }
@@ -214,6 +224,8 @@ class InvoiceController {
     private function update($id) {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') return;
 
+        $old_invoice = $this->repo->getById($id);
+        $old_status = $old_invoice->trang_thai;
         $new_status = sanitize_text_field($_POST['trang_thai']);
         $products_input = $_POST['products'] ?? [];
         $new_details = [];
@@ -231,13 +243,23 @@ class InvoiceController {
             $this->returnInventory($id);
             $this->repo->update($id, ['trang_thai' => $new_status]);
             $_SESSION['qln_success'] = "Hóa đơn đã được chuyển trạng thái và hoàn tồn kho.";
-            wp_redirect(admin_url('admin.php?page=qln-invoices')); exit;
+            wp_redirect(admin_url('admin.php?page=qln-invoices')); 
+            exit;
         }
 
         $this->detailRepo->deleteByInvoiceId($id); // Xóa để lưu mới
         $this->saveInvoiceDetails($id, $new_details);
         $this->repo->updateTotalAmount($id); // ĐÃ MỞ KHÓA: Đảm bảo tổng tiền khớp với sản phẩm hiện tại
         $this->updateInventory($id, $new_details);
+        $this->repo->update($id, ['trang_thai' => $new_status]); // Cập nhật trạng thái sau cùng
+
+        //  Nếu chuyển từ Chờ thanh toán sang Đã thanh toán, cộng dồn khách hàng ***
+        if ($old_status === 'Chờ thanh toán' && $new_status === 'Đã thanh toán') {
+            $invoice = $this->repo->getById($id);
+            $customerRepo = new CustomerRepository();
+            $customerRepo->updateTotalSpent($invoice->khach_hang_id, $invoice->tong_tien, true);
+            $customerRepo->updateOrderCount($invoice->khach_hang_id, true);
+        }
 
         $_SESSION['qln_success'] = "Cập nhật hóa đơn thành công!";
         wp_redirect(admin_url('admin.php?page=qln-invoices')); exit;
@@ -249,6 +271,11 @@ class InvoiceController {
         $invoice = $this->repo->getById($id);
         if ($invoice && $invoice->trang_thai === 'Chờ thanh toán') {
             $this->repo->update($id, ['trang_thai' => 'Đã thanh toán']);
+
+            // Cập nhật thống kê khách hàng
+            $customerRepo = new CustomerRepository();
+            $customerRepo->updateTotalSpent($invoice->khach_hang_id, $invoice->tong_tien, true);
+            $customerRepo->updateOrderCount($invoice->khach_hang_id, true);
             $_SESSION['qln_success'] = "Hóa đơn đã được ghi nhận thanh toán! Doanh thu đã được cộng.";
         }
         wp_redirect(admin_url('admin.php?page=qln-invoices')); exit;
@@ -277,7 +304,10 @@ class InvoiceController {
         $invoice = $this->repo->getById($id);
         if ($invoice && $invoice->trang_thai === 'Đã thanh toán') {
             $this->repo->update($id, ['trang_thai' => 'Hoàn tiền']);
-            
+            $customerRepo = new CustomerRepository();
+            $customerRepo->updateTotalSpent($invoice->khach_hang_id, $invoice->tong_tien, false);
+            $customerRepo->updateOrderCount($invoice->khach_hang_id, false);
+
             // Nếu đơn này khách đã mang hàng về (Tại quầy) thì thu hồi hàng vào kho
             if ($invoice->trang_thai_giao === 'Tại quầy') {
                 $this->returnInventory($id); 

@@ -86,4 +86,24 @@ class CustomerRepository {
             'than_thiet' => $than_thiet
         ];
     }
+    // trong CustomerRepository.php
+    public function updateTotalSpent($customer_id, $amount, $is_increment = true) {
+        global $wpdb;
+        $operator = $is_increment ? '+' : '-';
+        $sql = $wpdb->prepare(
+            "UPDATE {$this->table} SET tong_tien_da_chi = tong_tien_da_chi $operator %d WHERE id = %d",
+            $amount, $customer_id
+        );
+        return $wpdb->query($sql);
+    }
+
+    public function updateOrderCount($customer_id, $is_increment = true) {
+        global $wpdb;
+        $operator = $is_increment ? '+' : '-';
+        $sql = $wpdb->prepare(
+            "UPDATE {$this->table} SET so_luong_don_hang = so_luong_don_hang $operator 1 WHERE id = %d",
+            $customer_id
+        );
+        return $wpdb->query($sql);
+    }
 }
