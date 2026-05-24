@@ -1,136 +1,153 @@
-<?php if (!defined('ABSPATH')) exit; // Exit if accessed directly ?>
-    <div class="flex-1 flex flex-col h-screen overflow-hidden bg-gray-50">
+<?php if (!defined('ABSPATH')) exit; ?>
+<div class="p-8 bg-gray-50 flex-1 custom-scrollbar overflow-y-auto">
+    <div class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+            <h1 class="text-3xl font-black text-gray-800 tracking-tight">Bảng Điều Khiển Nhà Kho</h1>
+            <p class="text-sm text-gray-500 mt-1 font-medium">Tài khoản thủ kho: <span class="text-[#0a5c36] font-bold"><?php echo esc_html($userName); ?></span>. Giám sát thời gian thực luồng bốc dỡ hàng hóa.</p>
+        </div>
+        <div class="flex items-center gap-3 shrink-0">
+            <a href="?page=qln-nhap-hang-add" class="bg-gray-800 hover:bg-black text-white font-bold px-5 py-3 rounded-xl text-xs shadow-md transition flex items-center gap-2">
+                <i class="fa-solid fa-file-import"></i> Lập phiếu nhập kho
+            </a>
+            <a href="?page=qln-xuat-kho&action=create" class="bg-[#0a5c36] hover:bg-green-800 text-white font-bold px-5 py-3 rounded-xl text-xs shadow-md transition flex items-center gap-2">
+                <i class="fa-solid fa-truck-ramp-box"></i> Điều xe xuất kho
+            </a>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm border-l-4 border-l-blue-500">
+            <p class="text-[10px] font-black text-blue-500 uppercase tracking-widest mb-1">🚚 Chuyến xe chờ xuất kho</p>
+            <h3 class="text-3xl font-black text-gray-800 mt-1"><?php echo number_format($pending_stock_out); ?> <span class="text-sm font-medium text-gray-400">lệnh</span></h3>
+        </div>
+        <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm border-l-4 border-l-yellow-500">
+            <p class="text-[10px] font-black text-yellow-500 uppercase tracking-widest mb-1">📥 Hàng NCC chờ bốc dỡ</p>
+            <h3 class="text-3xl font-black text-gray-800 mt-1"><?php echo number_format($pending_stock_in); ?> <span class="text-sm font-medium text-gray-400">lệnh</span></h3>
+        </div>
+        <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm border-l-4 border-l-red-500">
+            <p class="text-[10px] font-black text-red-500 uppercase tracking-widest mb-1">🚨 Mã nội thất sắp hết</p>
+            <h3 class="text-3xl font-black text-red-600 mt-1"><?php echo number_format($low_stock_count); ?> <span class="text-sm font-medium text-gray-400">mã</span></h3>
+        </div>
+        <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm border-l-4 border-l-green-500">
+            <p class="text-[10px] font-black text-green-600 uppercase tracking-widest mb-1">📦 Mặt hàng lưu kho</p>
+            <h3 class="text-3xl font-black text-gray-800 mt-1"><?php echo number_format($total_items); ?> <span class="text-sm font-medium text-gray-400">kiểu</span></h3>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
-        <header class="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-8 shrink-0 z-10 shadow-sm">
-            <h2 class="font-bold text-gray-800 text-lg">Quản lý kho</h2>
-            <div class="flex items-center gap-5">
-                <div class="relative cursor-pointer hover:bg-gray-100 p-2 rounded-full transition">
-                    <span class="absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white"></span>
-                    <i class="fa-solid fa-bell text-gray-500 text-lg"></i>
-                </div>
-                <div class="h-6 w-[1px] bg-gray-200"></div>
-                <div class="flex items-center gap-3 cursor-pointer hover:bg-gray-50 p-1.5 rounded-lg transition">
-                    <div class="text-right hidden md:block">
-                        <p class="text-sm font-bold text-gray-800"><?php echo isset($userName) ? esc_html($userName) : 'Nhân viên kho'; ?></p>
-                        <p class="text-[10px] font-semibold text-green-600 underline decoration-2 offset-2 uppercase">Warehouse Online</p>
-                    </div>
-                    <div class="w-9 h-9 rounded-full bg-green-100 border border-green-200 flex items-center justify-center font-bold text-green-700 shadow-sm">
-                        <?php echo isset($userName) ? substr($userName, 0, 1) : 'W'; ?>
-                    </div>
-                </div>
-            </div>
-        </header>
-        <main class="flex-1 overflow-y-auto p-8 custom-scrollbar">
+        <div class="lg:col-span-2 space-y-6">
             
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.05)] hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <p class="text-sm text-gray-500 font-medium mb-1 tracking-tight">Tổng sản phẩm</p>
-                            <h3 class="text-3xl font-bold text-gray-800">1,205</h3>
-                        </div>
-                        <div class="w-12 h-12 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center text-xl"><i class="fa-solid fa-warehouse"></i></div>
-                    </div>
-                    <div class="mt-4 flex items-center gap-2">
-                        <span class="text-xs font-semibold text-green-600 bg-green-50 px-2 py-1 rounded-md flex items-center gap-1"><i class="fa-solid fa-couch"></i> 83%</span>
-                        <span class="text-xs text-gray-400 font-medium">tỉ lệ lấp đầy</span>
-                    </div>
+            <div class="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
+                <div class="flex justify-between items-center mb-4">
+                    <h4 class="font-black text-gray-700 text-sm uppercase tracking-wider flex items-center gap-2">
+                        <i class="fa-solid fa-truck-arrow-right text-gray-400"></i> Điều phối hành trình xuất kho mới nhất
+                    </h4>
+                    <a href="?page=qln-xuat-kho" class="text-xs text-green-700 font-bold hover:underline">Xem tất cả →</a>
                 </div>
-
-                <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.05)] hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <p class="text-sm text-gray-500 font-medium mb-1 tracking-tight">Sản phẩm sắp hết</p>
-                            <h3 class="text-3xl font-bold text-red-600">2</h3>
-                        </div>
-                        <div class="w-12 h-12 rounded-xl bg-red-50 text-red-600 flex items-center justify-center text-xl"><i class="fa-solid fa-triangle-exclamation"></i></div>
-                    </div>
-                    <div class="mt-4 flex items-center gap-2">
-                        <span class="text-xs font-semibold text-red-600 bg-red-50 px-2 py-1 rounded-md flex items-center gap-1"><i class="fa-solid fa-file-import"></i> Nhập hàng</span>
-                        <span class="text-xs text-gray-400 font-medium">cần ưu tiên</span>
-                    </div>
-                </div>
-
-                <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.05)] hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <p class="text-sm text-gray-500 font-medium mb-1 tracking-tight">Phiếu nhập hôm nay</p>
-                            <h3 class="text-3xl font-bold text-gray-800">5</h3>
-                        </div>
-                        <div class="w-12 h-12 rounded-xl bg-green-50 text-green-600 flex items-center justify-center text-xl"><i class="fa-solid fa-truck-ramp-box"></i></div>
-                    </div>
-                    <div class="mt-4 flex items-center gap-2">
-                        <span class="text-xs font-semibold text-green-600 bg-green-50 px-2 py-1 rounded-md flex items-center gap-1"><i class="fa-solid fa-clock"></i> 2 phiếu</span>
-                        <span class="text-xs text-gray-400 font-medium">đang xử lý</span>
-                    </div>
-                </div>
-
-                <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.05)] hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <p class="text-sm text-gray-500 font-medium mb-1 tracking-tight">Phiếu xuất hôm nay</p>
-                            <h3 class="text-3xl font-bold text-gray-800">8</h3>
-                        </div>
-                        <div class="w-12 h-12 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center text-xl"><i class="fa-solid fa-dolly"></i></div>
-                    </div>
-                    <div class="mt-4 flex items-center gap-2">
-                        <span class="text-xs font-semibold text-orange-600 bg-orange-50 px-2 py-1 rounded-md flex items-center gap-1"><i class="fa-solid fa-clock"></i> 3 phiếu</span>
-                        <span class="text-xs text-gray-400 font-medium">đang chờ lấy hàng</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-white rounded-2xl border border-gray-100 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.05)] overflow-hidden">
-                <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-white shrink-0">
-                    <h3 class="font-bold text-gray-800 text-lg">Yêu cầu nhập/xuất kho mới nhất</h3>
-                    <button class="text-sm text-green-600 font-semibold hover:text-green-700 hover:underline px-3 py-1.5 rounded-lg hover:bg-green-50 transition">Xem tất cả</button>
-                </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
-                        <thead class="bg-gray-50/80 text-xs uppercase font-bold text-gray-500 tracking-wider">
+                <div class="overflow-x-auto rounded-xl border border-gray-100">
+                    <table class="w-full text-left text-xs border-collapse">
+                        <thead class="bg-gray-800 text-white font-bold uppercase tracking-wider">
                             <tr>
-                                <th class="px-6 py-4 border-b border-gray-100">Loại phiếu</th>
-                                <th class="px-6 py-4 border-b border-gray-100">Mã phiếu</th>
-                                <th class="px-6 py-4 border-b border-gray-100">Sản phẩm chính</th>
-                                <th class="px-6 py-4 border-b border-gray-100 text-center">Số lượng</th>
-                                <th class="px-6 py-4 border-b border-gray-100">Trạng thái</th>
-                                <th class="px-6 py-4 border-b border-gray-100 text-right">Ngày tạo</th>
+                                <th class="p-3.5">Mã phiếu</th>
+                                <th class="p-3.5">Khách hàng nhận</th>
+                                <th class="p-3.5">Trạng thái xe</th>
                             </tr>
                         </thead>
-                        <tbody class="text-sm divide-y divide-gray-100 bg-white">
-                            <tr class="hover:bg-gray-50/50 transition">
-                                <td class="px-6 py-4 flex items-center gap-2.5 font-bold text-orange-700">
-                                    <i class="fa-solid fa-file-export"></i> Xuất kho
-                                </td>
-                                <td class="px-6 py-4 font-bold text-gray-800">#ORD-9921</td>
-                                <td class="px-6 py-4 text-gray-800 font-medium">Ghế Sofa Lux v2.0</td>
-                                <td class="px-6 py-4 text-center font-bold text-gray-800">2</td>
-                                <td class="px-6 py-4">
-                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-green-50 text-green-700 border border-green-200">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-green-500 mr-1.5"></span>
-                                        Đã hoàn thành
+                        <tbody class="divide-y font-medium text-gray-600">
+                            <?php foreach($recent_stock_out as $px): ?>
+                            <tr class="hover:bg-gray-50 transition">
+                                <td class="p-3.5 font-bold text-green-700 font-mono"><?php echo esc_html($px['ma_px']); ?></td>
+                                <td class="p-3.5 font-bold text-gray-800"><?php echo esc_html($px['ten_kh']); ?></td>
+                                static
+                                <td class="p-3.5">
+                                    <?php $color_out = ($px['trang_thai'] == 'Đã giao') ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'; ?>
+                                    <span class="px-2.5 py-1 rounded-md text-[9px] font-black uppercase <?php echo $color_out; ?>">
+                                        <?php echo esc_html($px['trang_thai']); ?>
                                     </span>
                                 </td>
-                                <td class="px-6 py-4 text-gray-500 text-right">04/05/2026</td>
                             </tr>
-                             <tr class="hover:bg-gray-50/50 transition">
-                                <td class="px-6 py-4 flex items-center gap-2.5 font-bold text-green-700">
-                                    <i class="fa-solid fa-file-import"></i> Nhập kho
-                                </td>
-                                <td class="px-6 py-4 font-bold text-gray-800">#PO-211</td>
-                                <td class="px-6 py-4 text-gray-800 font-medium">Bàn Ăn Walnut v1.5</td>
-                                <td class="px-6 py-4 text-center font-bold text-gray-800">5</td>
-                                <td class="px-6 py-4">
-                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-yellow-50 text-yellow-700 border border-yellow-200">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-yellow-500 mr-1.5"></span>
-                                        Đang xử lý
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4 text-gray-500 text-right">04/05/2026</td>
-                            </tr>
+                            <?php endforeach; ?>
+                            <?php if(empty($recent_stock_out)): ?>
+                                <tr><td colspan="3" class="p-5 text-center text-gray-400 italic">Hệ thống chưa phát sinh lệnh bốc xếp xuất kho nào.</td></tr>
+                            <?php endif; ?>
                         </tbody>
                     </table>
                 </div>
             </div>
-        </main>
+
+            <div class="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
+                <div class="flex justify-between items-center mb-4">
+                    <h4 class="font-black text-gray-700 text-sm uppercase tracking-wider flex items-center gap-2">
+                        <i class="fa-solid fa-boxes-packing text-gray-400"></i> Tiến độ nhập kho nguyên vật liệu từ nhà cung cấp
+                    </h4>
+                    <a href="?page=qln-nhap-hang" class="text-xs text-green-700 font-bold hover:underline">Xem tất cả →</a>
+                </div>
+                <div class="overflow-x-auto rounded-xl border border-gray-100">
+                    <table class="w-full text-left text-xs border-collapse">
+                        <thead class="bg-gray-800 text-white font-bold uppercase tracking-wider">
+                            <tr>
+                                <th class="p-3.5">Mã phiếu</th>
+                                <th class="p-3.5">Nhà cung cấp đối tác</th>
+                                <th class="p-3.5">Trạng thái kiểm đếm</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y font-medium text-gray-600">
+                            <?php foreach($recent_stock_in as $pn): ?>
+                            <tr class="hover:bg-gray-50 transition">
+                                <td class="p-3.5 font-bold text-blue-700 font-mono"><?php echo esc_html($pn['ma_pn']); ?></td>
+                                <td class="p-3.5 font-bold text-gray-800"><?php echo esc_html($pn['ten_ncc']); ?></td>
+                                <td class="p-3.5">
+                                    <?php $color_in = ($pn['trang_thai'] == 'Đã nhập kho') ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'; ?>
+                                    <span class="px-2.5 py-1 rounded-md text-[9px] font-black uppercase <?php echo $color_in; ?>">
+                                        <?php echo esc_html($pn['trang_thai']); ?>
+                                    </span>
+                                </td>
+                            </tr>
+                            <?php endforeach; ?>
+                            <?php if(empty($recent_stock_in)): ?>
+                                <tr><td colspan="3" class="p-5 text-center text-gray-400 italic">Chưa ghi nhận tiến độ nhập kho vật liệu mới.</td></tr>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="lg:col-span-1">
+            <div class="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm h-full flex flex-col">
+                <div class="mb-4">
+                    <h4 class="font-black text-red-500 text-sm uppercase tracking-wider flex items-center gap-2">
+                        <i class="fa-solid fa-triangle-exclamation animate-pulse"></i> Mặt hàng cần ưu tiên đặt thêm / sản xuất
+                    </h4>
+                    <p class="text-xs text-gray-400 mt-1">Danh sách sản phẩm nội thất có tồn kho dưới 10 đơn vị.</p>
+                </div>
+                
+                <div class="space-y-3 flex-1 overflow-y-auto pr-1 custom-scrollbar">
+                    <?php foreach($low_stock_details as $item): ?>
+                    <div class="flex justify-between items-center bg-red-50/60 p-4 rounded-xl border border-red-100 hover:bg-red-50 transition">
+                        <div class="max-w-[70%]">
+                            <p class="font-black text-gray-800 text-xs truncate"><?php echo esc_html($item['ten_sp']); ?></p>
+                            <p class="text-[10px] text-gray-400 font-mono mt-1 uppercase tracking-wider"><i class="fa-solid fa-barcode"></i> SKU: <?php echo esc_html($item['ma_sp']); ?></p>
+                        </div>
+                        <div class="text-right whitespace-nowrap">
+                            <span class="px-3 py-1.5 bg-red-600 text-white font-black text-xs rounded-lg shadow-sm">
+                                <?php echo $item['so_luong_ton']; ?> cái
+                            </span>
+                        </div>
+                    </div>
+                    <?php endforeach; ?>
+                    
+                    <?php if (empty($low_stock_details)): ?>
+                    <div class="text-center py-12 text-gray-400 text-xs italic flex flex-col items-center justify-center gap-2 flex-1">
+                        <i class="fa-regular fa-circle-check text-3xl text-green-500"></i>
+                        Tồn kho toàn bộ sản phẩm gỗ đang ở mức an toàn.
+                    </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+
     </div>
+</div>

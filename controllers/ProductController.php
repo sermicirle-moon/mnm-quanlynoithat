@@ -87,6 +87,13 @@ class ProductController {
 
     private function store() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') return;
+        
+        // Bổ sung dòng này để lấy lỗi trực tiếp từ Database
+        global $wpdb; 
+        
+        // FIX LỖI KHÓA NGOẠI: Nếu không chọn loại SP, nạp NULL thay vì nạp số 0
+        $id_loai = !empty($_POST['id_loai']) ? intval($_POST['id_loai']) : null;
+
         $data = [
             'ma_sp'        => sanitize_text_field($_POST['ma_sp']),
             'ten_sp'       => sanitize_text_field($_POST['ten_sp']),
@@ -95,19 +102,28 @@ class ProductController {
             'so_luong_ton' => intval($_POST['so_luong_ton']),
             'hinh_anh'     => sanitize_text_field($_POST['hinh_anh']),
             'trang_thai'   => sanitize_text_field($_POST['trang_thai']),
-            'id_loai'      => intval($_POST['id_loai'] ?? 0)
+            'id_loai'      => $id_loai
         ];
+        
         if ($this->repo->create($data)) {
             $_SESSION['qln_success'] = "Thêm sản phẩm thành công!";
         } else {
-            $_SESSION['qln_error'] = "Thêm sản phẩm thất bại!";
+            $db_error = $wpdb->last_error;
+            $_SESSION['qln_error'] = "Thêm thất bại! Chi tiết lỗi: " . ($db_error ? $db_error : 'Không xác định được lỗi.');
         }
+        
         wp_redirect(admin_url('admin.php?page=qln-products'));
         exit;
     }
 
     private function update($id) {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') return;
+        
+        global $wpdb;
+        
+        // SỬA LỖI KHÓA NGOẠI: Nếu không chọn loại SP, nạp NULL để tránh làm gãy ràng buộc DB
+        $id_loai = !empty($_POST['id_loai']) ? intval($_POST['id_loai']) : null;
+
         $data = [
             'ma_sp'        => sanitize_text_field($_POST['ma_sp']),
             'ten_sp'       => sanitize_text_field($_POST['ten_sp']),
@@ -116,13 +132,17 @@ class ProductController {
             'so_luong_ton' => intval($_POST['so_luong_ton']),
             'hinh_anh'     => sanitize_text_field($_POST['hinh_anh']),
             'trang_thai'   => sanitize_text_field($_POST['trang_thai']),
-            'id_loai'      => intval($_POST['id_loai'] ?? 0)
+            'id_loai'      => $id_loai
         ];
-        if ($this->repo->update($id, $data)) {
+        
+        $result = $this->repo->update($id, $data);
+        
+        if ($result !== false) {
             $_SESSION['qln_success'] = "Cập nhật sản phẩm thành công!";
         } else {
-            $_SESSION['qln_error'] = "Cập nhật thất bại!";
+            $_SESSION['qln_error'] = "Cập nhật thất bại! Chi tiết lỗi: " . ($wpdb->last_error ? $wpdb->last_error : 'Không xác định.');
         }
+        
         wp_redirect(admin_url('admin.php?page=qln-products'));
         exit;
     }
