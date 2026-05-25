@@ -104,15 +104,19 @@ class ShippingController {
     }
 
     private function exportCsv($carriers) {
+        while (ob_get_level() > 0) {
+            ob_end_clean();
+        }
+
         nocache_headers();
         header('Content-Type: text/csv; charset=UTF-8');
         header('Content-Disposition: attachment; filename="timberflow-shipping-' . date('Y-m-d') . '.csv"');
         $output = fopen('php://output', 'w');
         if ($output === false) exit;
         fprintf($output, chr(0xEF) . chr(0xBB) . chr(0xBF));
-        fputcsv($output, ['Mã NVC', 'Tên NVC', 'Loại hình', 'SĐT tài xế', 'Biển số xe', 'Trạng thái']);
+        fputcsv($output, ['ID', 'Mã NVC', 'Tên NVC', 'Loại hình', 'SĐT tài xế', 'Biển số xe', 'Trạng thái', 'Ngày tạo']);
         foreach ($carriers as $carrier) {
-            fputcsv($output, [$carrier->ma_nvc, $carrier->ten_nvc, $carrier->loai_hinh, $carrier->sdt_tai_xe, $carrier->bien_so_xe, $carrier->getTrangThaiText()]);
+            fputcsv($output, [$carrier->id, $carrier->ma_nvc, $carrier->ten_nvc, $carrier->loai_hinh, $carrier->sdt_tai_xe, $carrier->bien_so_xe, $carrier->getTrangThaiText(), $carrier->ngay_tao]);
         }
         fclose($output);
         exit;
@@ -121,15 +125,19 @@ class ShippingController {
     private function exportPdf($carriers) {
         $filename = $this->buildPdfFilename('shipping');
 
+        while (ob_get_level() > 0) {
+            ob_end_clean();
+        }
+
         nocache_headers();
         header('Content-Type: text/html; charset=UTF-8');
         ?>
         <!DOCTYPE html>
         <html><head><meta charset="UTF-8"><title><?php echo esc_html($filename); ?></title>
-        <style>body{font-family:Arial,sans-serif;color:#0f172a;padding:24px}h1{font-size:24px;margin-bottom:4px}.meta{color:#64748b;margin-bottom:20px}.actions{display:flex;gap:8px;margin-bottom:16px}button{border:1px solid #cbd5e1;background:#fff;border-radius:8px;padding:8px 12px;font-weight:700;cursor:pointer}table{width:100%;border-collapse:collapse;font-size:12px}th,td{border:1px solid #e2e8f0;padding:8px;text-align:left}th{background:#f1f5f9}@media print{.actions{display:none}}</style>
+        <style>body{font-family:Arial,sans-serif;color:#0f172a;padding:24px}h1{font-size:24px;margin-bottom:4px}.meta{color:#64748b;margin-bottom:20px}.actions{display:flex;gap:8px;margin-bottom:16px}button{border:1px solid #cbd5e1;background:#fff;border-radius:8px;padding:8px 12px;font-weight:700;cursor:pointer}table{width:100%;border-collapse:collapse;font-size:12px}th,td{border:1px solid #e2e8f0;padding:8px;text-align:left}th{background:#f1f5f9}@page{margin:12mm}@media print{body{padding:0}.actions{display:none}}</style>
         </head><body><div class="actions"><button onclick="window.print()">In / Lưu PDF</button><button onclick="window.close()">Đóng</button></div><h1>Báo cáo nhà vận chuyển</h1><p class="meta">Tên file gợi ý: <?php echo esc_html($filename); ?>.pdf</p><p class="meta">Tổng: <?php echo esc_html((string) count($carriers)); ?> nhà vận chuyển - Ngày xuất: <?php echo esc_html(date_i18n('d/m/Y H:i')); ?></p><table><thead><tr><th>Mã NVC</th><th>Tên NVC</th><th>Loại hình</th><th>SĐT tài xế</th><th>Biển số xe</th><th>Trạng thái</th></tr></thead><tbody>
         <?php foreach ($carriers as $carrier): ?><tr><td><?php echo esc_html($carrier->ma_nvc); ?></td><td><?php echo esc_html($carrier->ten_nvc); ?></td><td><?php echo esc_html($carrier->loai_hinh); ?></td><td><?php echo esc_html($carrier->sdt_tai_xe); ?></td><td><?php echo esc_html($carrier->bien_so_xe); ?></td><td><?php echo esc_html($carrier->getTrangThaiText()); ?></td></tr><?php endforeach; ?>
-        </tbody></table><script>window.addEventListener('load',function(){window.print();});</script></body></html>
+        </tbody></table></body></html>
         <?php
         exit;
     }

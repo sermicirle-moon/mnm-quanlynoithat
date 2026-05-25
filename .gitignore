@@ -55,3 +55,4 @@ print(f"File created: {file_path}")
 
 .omo
 opensource.sql
+wordpress.sql

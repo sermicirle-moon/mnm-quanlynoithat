@@ -60,6 +60,10 @@ class ReportController {
         $filters = $this->getFilters();
         $data = $this->buildReportData($filters);
 
+        while (ob_get_level() > 0) {
+            ob_end_clean();
+        }
+
         nocache_headers();
         header('Content-Type: text/csv; charset=UTF-8');
         header('Content-Disposition: attachment; filename="timberflow-report-' . date('Y-m-d') . '.csv"');
@@ -77,15 +81,17 @@ class ReportController {
             fputcsv($output, [$key, $value]);
         }
 
-        $this->writeCsvSection($output, 'Tổng hợp tháng', ['Tháng', 'Chi phí nhập hàng', 'Doanh thu bán ra', 'Lợi nhuận gộp', 'Tỷ lệ lãi (%)'], $data['monthly_comparison'], ['label', 'cost', 'revenue', 'profit', 'profit_rate']);
+        $this->writeCsvSection($output, 'Danh mục bán chạy', ['Danh mục', 'Doanh thu'], $data['category_sales'], ['category', 'revenue']);
+        $this->writeCsvSection($output, 'Xu hướng doanh thu', ['Tháng', 'Doanh thu'], $data['revenue_trend'], ['label', 'revenue']);
+        $this->writeCsvSection($output, 'Tổng hợp tháng', ['Tháng', 'Chi phí nhập hàng', 'Doanh thu bán ra', 'Chênh lệch thu - nhập', 'Tỷ lệ chênh lệch (%)'], $data['monthly_comparison'], ['label', 'cost', 'revenue', 'profit', 'profit_rate']);
         $this->writeCsvSection($output, 'Hóa đơn gần đây', ['Mã HĐ', 'Tổng tiền', 'Ngày tạo', 'Trạng thái'], $data['recent_invoices'], ['ma_hd', 'tong_tien', 'ngay_tao', 'trang_thai']);
         $this->writeCsvSection($output, 'Top sản phẩm', ['Mã SP', 'Tên SP', 'Số lượng bán', 'Doanh thu', 'Số đơn'], $data['top_products'], ['ma_sp', 'ten_sp', 'quantity_sold', 'revenue', 'order_count']);
         $this->writeCsvSection($output, 'Top khách hàng', ['Mã KH', 'Tên KH', 'SĐT', 'Số hóa đơn', 'Tổng chi tiêu'], $data['top_customers'], ['ma_kh', 'ten_kh', 'sdt', 'invoice_count', 'total_spent']);
         $this->writeCsvSection($output, 'Trạng thái hóa đơn', ['Trạng thái', 'Số lượng', 'Giá trị'], $data['invoice_status_breakdown'], ['status', 'count', 'amount']);
-        $this->writeCsvSection($output, 'Trạng thái giao hóa đơn', ['Trạng thái', 'Số lượng', 'Giá trị'], $data['shipping_status_breakdown'], ['status', 'count', 'amount']);
-        $this->writeCsvSection($output, 'Cảnh báo tồn kho', ['Mã SP', 'Tên SP', 'Danh mục', 'Tồn kho', 'Trạng thái'], $data['stock_alerts'], ['ma_sp', 'ten_sp', 'category', 'so_luong_ton', 'trang_thai']);
-        $this->writeCsvSection($output, 'Nhập hàng theo nhà cung cấp', ['Mã NCC', 'Tên NCC', 'Số phiếu', 'Tổng nhập'], $data['supplier_purchasing'], ['ma_ncc', 'ten_ncc', 'receipt_count', 'total_purchase']);
-        $this->writeCsvSection($output, 'Trạng thái phiếu xuất', ['Trạng thái', 'Số phiếu', 'Phí vận chuyển'], $data['stock_out_status_breakdown'], ['status', 'count', 'shipping_fee']);
+        $this->writeCsvSection($output, 'Trạng thái giao trên hóa đơn', ['Trạng thái', 'Số lượng', 'Giá trị'], $data['shipping_status_breakdown'], ['status', 'count', 'amount']);
+        $this->writeCsvSection($output, 'Cảnh báo tồn kho hiện tại', ['Mã SP', 'Tên SP', 'Danh mục', 'Tồn hiện tại', 'Giá trị tồn hiện tại', 'Trạng thái'], $data['stock_alerts'], ['ma_sp', 'ten_sp', 'category', 'so_luong_ton', 'inventory_value', 'trang_thai']);
+        $this->writeCsvSection($output, 'Nhập hàng theo nhà cung cấp', ['Mã NCC', 'Tên NCC', 'Số phiếu', 'Tổng nhập', 'Lần nhập gần nhất'], $data['supplier_purchasing'], ['ma_ncc', 'ten_ncc', 'receipt_count', 'total_purchase', 'latest_purchase']);
+        $this->writeCsvSection($output, 'Trạng thái xử lý phiếu xuất kho', ['Trạng thái', 'Số phiếu', 'Phí vận chuyển'], $data['stock_out_status_breakdown'], ['status', 'count', 'shipping_fee']);
         $this->writeCsvSection($output, 'Hiệu suất nhà vận chuyển', ['Nhà vận chuyển', 'Loại hình', 'Số chuyến', 'Đã giao', 'Phí vận chuyển'], $data['carrier_shipping_summary'], ['ten_nvc', 'loai_hinh', 'shipment_count', 'delivered_count', 'shipping_fee']);
 
         fclose($output);
@@ -98,6 +104,10 @@ class ReportController {
         $data = $this->buildReportData($filters);
         $summary = $data['summary'];
         $filename = $this->buildPdfFilename('report');
+
+        while (ob_get_level() > 0) {
+            ob_end_clean();
+        }
 
         nocache_headers();
         header('Content-Type: text/html; charset=UTF-8');
@@ -119,7 +129,8 @@ class ReportController {
                 .card { border: 1px solid #cbd5e1; border-radius: 10px; padding: 14px; }
                 .label { color: #64748b; font-size: 12px; text-transform: uppercase; font-weight: 700; }
                 .value { font-size: 22px; font-weight: 700; margin-top: 8px; }
-                @media print { .actions { display: none; } body { margin: 16px; } }
+                @page { margin: 12mm; }
+                @media print { .actions { display: none; } body { margin: 0; } }
             </style>
         </head>
         <body>
@@ -130,16 +141,19 @@ class ReportController {
             <div class="grid">
                 <div class="card"><div class="label">Doanh thu</div><div class="value"><?php echo esc_html(number_format((float) $summary['total_revenue'])); ?>đ</div></div>
                 <div class="card"><div class="label">Chi phí nhập</div><div class="value"><?php echo esc_html(number_format((float) $summary['stock_in_cost'])); ?>đ</div></div>
-                <div class="card"><div class="label">Lợi nhuận</div><div class="value"><?php echo esc_html(number_format((float) $summary['gross_profit'])); ?>đ</div></div>
-                <div class="card"><div class="label">Tồn kho</div><div class="value"><?php echo esc_html(number_format((int) $summary['inventory_quantity'])); ?> SP</div></div>
+                <div class="card"><div class="label">Chênh lệch thu - nhập</div><div class="value"><?php echo esc_html(number_format((float) $summary['gross_profit'])); ?>đ</div></div>
+                <div class="card"><div class="label">Tồn hiện tại</div><div class="value"><?php echo esc_html(number_format((int) $summary['inventory_quantity'])); ?> SP</div></div>
             </div>
-            <?php $this->renderPdfTable('Tổng hợp tháng', ['Tháng', 'Chi phí', 'Doanh thu', 'Lợi nhuận', 'Tỷ lệ lãi'], $data['monthly_comparison'], ['label', 'cost', 'revenue', 'profit', 'profit_rate']); ?>
+            <?php $this->renderPdfTable('Danh mục bán chạy', ['Danh mục', 'Doanh thu'], $data['category_sales'], ['category', 'revenue']); ?>
+            <?php $this->renderPdfTable('Xu hướng doanh thu', ['Tháng', 'Doanh thu'], $data['revenue_trend'], ['label', 'revenue']); ?>
+            <?php $this->renderPdfTable('Tổng hợp tháng', ['Tháng', 'Chi phí', 'Doanh thu', 'Chênh lệch thu - nhập', 'Tỷ lệ chênh lệch'], $data['monthly_comparison'], ['label', 'cost', 'revenue', 'profit', 'profit_rate']); ?>
             <?php $this->renderPdfTable('Top sản phẩm', ['Mã SP', 'Tên SP', 'SL bán', 'Doanh thu'], $data['top_products'], ['ma_sp', 'ten_sp', 'quantity_sold', 'revenue']); ?>
             <?php $this->renderPdfTable('Top khách hàng', ['Mã KH', 'Tên KH', 'Số HĐ', 'Tổng chi'], $data['top_customers'], ['ma_kh', 'ten_kh', 'invoice_count', 'total_spent']); ?>
             <?php $this->renderPdfTable('Trạng thái hóa đơn', ['Trạng thái', 'Số lượng', 'Giá trị'], $data['invoice_status_breakdown'], ['status', 'count', 'amount']); ?>
-            <?php $this->renderPdfTable('Cảnh báo tồn kho', ['Mã SP', 'Tên SP', 'Tồn kho', 'Trạng thái'], $data['stock_alerts'], ['ma_sp', 'ten_sp', 'so_luong_ton', 'trang_thai']); ?>
+            <?php $this->renderPdfTable('Trạng thái giao trên hóa đơn', ['Trạng thái', 'Số lượng', 'Giá trị'], $data['shipping_status_breakdown'], ['status', 'count', 'amount']); ?>
+            <?php $this->renderPdfTable('Trạng thái xử lý phiếu xuất kho', ['Trạng thái', 'Số phiếu', 'Phí vận chuyển'], $data['stock_out_status_breakdown'], ['status', 'count', 'shipping_fee']); ?>
+            <?php $this->renderPdfTable('Cảnh báo tồn kho hiện tại', ['Mã SP', 'Tên SP', 'Tồn hiện tại', 'Giá trị tồn hiện tại', 'Trạng thái'], $data['stock_alerts'], ['ma_sp', 'ten_sp', 'so_luong_ton', 'inventory_value', 'trang_thai']); ?>
             <?php $this->renderPdfTable('Nhập hàng theo nhà cung cấp', ['Mã NCC', 'Tên NCC', 'Số phiếu', 'Tổng nhập'], $data['supplier_purchasing'], ['ma_ncc', 'ten_ncc', 'receipt_count', 'total_purchase']); ?>
-            <script>window.addEventListener('load',function(){window.print();});</script>
         </body>
         </html>
         <?php

@@ -49,6 +49,21 @@ class UserRepository {
         return $users;
     }
 
+    public function getAllWithFilters($filters = []) {
+        global $wpdb;
+        $where = $this->buildWhereClause($filters);
+        $rows = $wpdb->get_results("SELECT * FROM {$this->table} {$where} ORDER BY id DESC", ARRAY_A);
+        $users = [];
+
+        if ($rows) {
+            foreach ($rows as $row) {
+                $users[] = new User($row);
+            }
+        }
+
+        return $users;
+    }
+
     public function getTotalCount($filters = []) {
         global $wpdb;
         $where = $this->buildWhereClause($filters);

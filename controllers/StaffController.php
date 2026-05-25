@@ -80,7 +80,11 @@ class StaffController {
 
     private function exportCsv() {
         $filters = $this->getFilters();
-        $staff = $this->repo->getAllPaginated(10000, 0, $filters);
+        $staff = $this->repo->getAllWithFilters($filters);
+
+        while (ob_get_level() > 0) {
+            ob_end_clean();
+        }
 
         nocache_headers();
         header('Content-Type: text/csv; charset=UTF-8');
@@ -90,9 +94,9 @@ class StaffController {
         if ($output === false) exit;
 
         fprintf($output, chr(0xEF) . chr(0xBB) . chr(0xBF));
-        fputcsv($output, ['ID', 'Họ tên', 'Email', 'SĐT', 'Quê quán', 'Vai trò', 'Trạng thái', 'Ngày tạo']);
+        fputcsv($output, ['ID', 'Họ tên', 'Email', 'SĐT', 'Quê quán', 'Mã vai trò', 'Vai trò', 'Trạng thái', 'Ngày tạo']);
         foreach ($staff as $member) {
-            fputcsv($output, [$member->id, $member->ho_ten, $member->email, $member->sdt, $member->que_quan, $member->getRoleName(), $member->getTrangThaiText(), $member->ngay_tao]);
+            fputcsv($output, [$member->id, $member->ho_ten, $member->email, $member->sdt, $member->que_quan, $member->role_id, $member->getRoleName(), $member->getTrangThaiText(), $member->ngay_tao]);
         }
 
         fclose($output);
@@ -105,15 +109,19 @@ class StaffController {
         $filename = $this->buildPdfFilename('staff');
         $title = 'Báo cáo nhân viên';
 
+        while (ob_get_level() > 0) {
+            ob_end_clean();
+        }
+
         nocache_headers();
         header('Content-Type: text/html; charset=UTF-8');
         ?>
         <!DOCTYPE html>
         <html><head><meta charset="UTF-8"><title><?php echo esc_html($filename); ?></title>
-        <style>body{font-family:Arial,sans-serif;color:#0f172a;padding:24px}h1{font-size:24px;margin-bottom:4px}.meta{color:#64748b;margin-bottom:20px}.actions{display:flex;gap:8px;margin-bottom:16px}button{border:1px solid #cbd5e1;background:#fff;border-radius:8px;padding:8px 12px;font-weight:700;cursor:pointer}table{width:100%;border-collapse:collapse;font-size:12px}th,td{border:1px solid #e2e8f0;padding:8px;text-align:left}th{background:#f1f5f9}@media print{.actions{display:none}}</style>
+        <style>body{font-family:Arial,sans-serif;color:#0f172a;padding:24px}h1{font-size:24px;margin-bottom:4px}.meta{color:#64748b;margin-bottom:20px}.actions{display:flex;gap:8px;margin-bottom:16px}button{border:1px solid #cbd5e1;background:#fff;border-radius:8px;padding:8px 12px;font-weight:700;cursor:pointer}table{width:100%;border-collapse:collapse;font-size:12px}th,td{border:1px solid #e2e8f0;padding:8px;text-align:left}th{background:#f1f5f9}@page{margin:12mm}@media print{body{padding:0}.actions{display:none}}</style>
         </head><body><div class="actions"><button onclick="window.print()">In / Lưu PDF</button><button onclick="window.close()">Đóng</button></div><h1><?php echo esc_html($title); ?></h1><p class="meta">Tên file gợi ý: <?php echo esc_html($filename); ?>.pdf</p><p class="meta">Tổng: <?php echo esc_html((string) count($staff)); ?> nhân viên - Ngày xuất: <?php echo esc_html(date_i18n('d/m/Y H:i')); ?></p><table><thead><tr><th>ID</th><th>Họ tên</th><th>Email</th><th>SĐT</th><th>Quê quán</th><th>Vai trò</th><th>Trạng thái</th></tr></thead><tbody>
         <?php foreach ($staff as $member): ?><tr><td><?php echo esc_html((string) $member->id); ?></td><td><?php echo esc_html($member->ho_ten); ?></td><td><?php echo esc_html($member->email); ?></td><td><?php echo esc_html($member->sdt); ?></td><td><?php echo esc_html($member->que_quan); ?></td><td><?php echo esc_html($member->getRoleName()); ?></td><td><?php echo esc_html($member->getTrangThaiText()); ?></td></tr><?php endforeach; ?>
-        </tbody></table><script>window.addEventListener('load',function(){window.print();});</script></body></html>
+        </tbody></table></body></html>
         <?php
         exit;
     }

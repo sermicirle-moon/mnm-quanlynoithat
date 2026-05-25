@@ -52,7 +52,7 @@ class ReportRepository {
         [$stockInWhere, $stockInArgs] = $this->buildDateWhere('ngay_nhap', $filters, 'AND');
         [$stockOutWhere, $stockOutArgs] = $this->buildDateWhere('ngay_xuat', $filters, 'AND');
 
-        $totalRevenue = (float) $this->getVar("SELECT COALESCE(SUM(tong_tien), 0) FROM {$this->table_invoice} WHERE trang_thai = 'Hoàn thành' {$invoiceWhere}", $invoiceArgs);
+        $totalRevenue = (float) $this->getVar("SELECT COALESCE(SUM(tong_tien), 0) FROM {$this->table_invoice} WHERE trang_thai = 'Đã thanh toán' {$invoiceWhere}", $invoiceArgs);
         $stockInCost = (float) $this->getVar("SELECT COALESCE(SUM(tong_tien), 0) FROM {$this->table_stock_in} WHERE trang_thai = 'Đã nhập kho' {$stockInWhere}", $stockInArgs);
         $stockOutFees = (float) $this->getVar("SELECT COALESCE(SUM(phi_van_chuyen), 0) FROM {$this->table_stock_out} WHERE 1=1 {$stockOutWhere}", $stockOutArgs);
         $inventoryQuantity = (int) $wpdb->get_var("SELECT COALESCE(SUM(so_luong_ton), 0) FROM {$this->table_product}");
@@ -61,7 +61,7 @@ class ReportRepository {
 
         return [
             'total_revenue' => $totalRevenue,
-            'completed_invoice_count' => (int) $this->getVar("SELECT COUNT(*) FROM {$this->table_invoice} WHERE trang_thai = 'Hoàn thành' {$invoiceWhere}", $invoiceArgs),
+            'completed_invoice_count' => (int) $this->getVar("SELECT COUNT(*) FROM {$this->table_invoice} WHERE trang_thai = 'Đã thanh toán' {$invoiceWhere}", $invoiceArgs),
             'invoice_count' => (int) $this->getVar("SELECT COUNT(*) FROM {$this->table_invoice} WHERE 1=1 {$invoiceWhere}", $invoiceArgs),
             'stock_in_cost' => $stockInCost,
             'stock_out_fees' => $stockOutFees,
@@ -92,7 +92,7 @@ class ReportRepository {
         if ($detailCount > 0) {
             return $this->getResults("SELECT COALESCE(l.ten_loai, 'Chưa phân loại') AS category, COALESCE(SUM(hdct.thanh_tien), 0) AS revenue
                     FROM {$this->table_invoice_detail} hdct
-                    INNER JOIN {$this->table_invoice} hd ON hd.id = hdct.hoa_don_id AND hd.trang_thai = 'Hoàn thành' {$where}
+                    INNER JOIN {$this->table_invoice} hd ON hd.id = hdct.hoa_don_id AND hd.trang_thai = 'Đã thanh toán' {$where}
                     LEFT JOIN {$this->table_product} sp ON sp.id = hdct.san_pham_id
                     LEFT JOIN {$this->table_category} l ON l.id_loai = sp.id_loai
                     GROUP BY l.id_loai, l.ten_loai
@@ -110,7 +110,7 @@ class ReportRepository {
         [$where, $args] = $this->buildDateWhere('ngay_tao', $filters, 'AND');
         return $this->getResults("SELECT DATE_FORMAT(ngay_tao, '%Y-%m') AS month_key, DATE_FORMAT(ngay_tao, 'Tháng %m/%Y') AS label, COALESCE(SUM(tong_tien), 0) AS revenue
                 FROM {$this->table_invoice}
-                WHERE trang_thai = 'Hoàn thành' {$where}
+                WHERE trang_thai = 'Đã thanh toán' {$where}
                 GROUP BY month_key, label
                 ORDER BY month_key ASC", $args);
     }
@@ -128,7 +128,7 @@ class ReportRepository {
                     UNION ALL
                     SELECT DATE_FORMAT(ngay_tao, '%Y-%m') AS month_key, DATE_FORMAT(ngay_tao, 'Tháng %m/%Y') AS label, 0 AS cost, COALESCE(SUM(tong_tien), 0) AS revenue
                     FROM {$this->table_invoice}
-                    WHERE trang_thai = 'Hoàn thành' {$invoiceWhere}
+                    WHERE trang_thai = 'Đã thanh toán' {$invoiceWhere}
                     GROUP BY month_key, label
                 ) monthly
                 GROUP BY month_key
@@ -153,7 +153,7 @@ class ReportRepository {
         if ($detailCount > 0) {
             return $this->getResults("SELECT sp.ma_sp, sp.ten_sp, COALESCE(SUM(hdct.so_luong), 0) AS quantity_sold, COALESCE(SUM(hdct.thanh_tien), 0) AS revenue, COUNT(DISTINCT hd.id) AS order_count
                     FROM {$this->table_invoice_detail} hdct
-                    INNER JOIN {$this->table_invoice} hd ON hd.id = hdct.hoa_don_id AND hd.trang_thai = 'Hoàn thành' {$where}
+                    INNER JOIN {$this->table_invoice} hd ON hd.id = hdct.hoa_don_id AND hd.trang_thai = 'Đã thanh toán' {$where}
                     LEFT JOIN {$this->table_product} sp ON sp.id = hdct.san_pham_id
                     GROUP BY sp.id, sp.ma_sp, sp.ten_sp
                     ORDER BY revenue DESC, quantity_sold DESC
@@ -171,7 +171,7 @@ class ReportRepository {
         return $this->getResults("SELECT kh.ma_kh, kh.ten_kh, kh.sdt, COUNT(hd.id) AS invoice_count, COALESCE(SUM(hd.tong_tien), 0) AS total_spent, MAX(hd.ngay_tao) AS latest_invoice
                 FROM {$this->table_invoice} hd
                 LEFT JOIN {$this->table_customer} kh ON kh.id = hd.khach_hang_id
-                WHERE hd.trang_thai = 'Hoàn thành' {$where}
+                WHERE hd.trang_thai = 'Đã thanh toán' {$where}
                 GROUP BY kh.id, kh.ma_kh, kh.ten_kh, kh.sdt
                 ORDER BY total_spent DESC, invoice_count DESC
                 LIMIT " . max(1, absint($limit)), $args);

@@ -51,9 +51,23 @@ class SupplierRepository {
         return $suppliers;
     }
 
+    public function getById($id) {
+        global $wpdb;
+        $row = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$this->table} WHERE id = %d", (int) $id), ARRAY_A);
+        return $row ? new Supplier($row) : null;
+    }
     public function create($data) {
         global $wpdb;
         return $wpdb->insert($this->table, $data);
+    }
+    public function update($id, $data) {
+        global $wpdb;
+        return $wpdb->update($this->table, $data, ['id' => (int) $id]);
+    }
+
+    public function delete($id) {
+        global $wpdb;
+        return $wpdb->delete($this->table, ['id' => (int) $id], ['%d']);
     }
     public function getTotalCount($filters = []) {
         global $wpdb;

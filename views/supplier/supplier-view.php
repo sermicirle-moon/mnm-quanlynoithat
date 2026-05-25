@@ -99,6 +99,7 @@ $pdfUrl = add_query_arg(array_filter([
                     <th class="px-6 py-4">Liên lạc</th>
                     <th class="px-6 py-4">Địa chỉ</th>
                     <th class="px-6 py-4">Trạng thái</th>
+                    <th class="px-6 py-4 text-center">Thao tác</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-slate-100">
@@ -116,10 +117,16 @@ $pdfUrl = add_query_arg(array_filter([
                         <?php $statusClass = ((int) $s->trang_thai === 1) ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'; ?>
                         <span class="px-3 py-1 rounded-full text-[11px] font-bold <?php echo $statusClass; ?>"><?php echo esc_html($s->getTrangThaiText()); ?></span>
                     </td>
+                    <td class="px-6 py-4 text-center">
+                        <div class="flex justify-center gap-3">
+                            <a href="<?php echo esc_url(admin_url('admin.php?page=qln-suppliers&action=edit&id=' . (int) $s->id)); ?>" class="text-blue-600 hover:text-blue-800"><i class="fa-solid fa-pen-to-square"></i></a>
+                            <a href="<?php echo esc_url(admin_url('admin.php?page=qln-suppliers&action=delete&id=' . (int) $s->id)); ?>" onclick="return confirm('Bạn có chắc muốn xóa nhà cung cấp này?')" class="text-red-500 hover:text-red-700"><i class="fa-solid fa-trash-can"></i></a>
+                        </div>
+                    </td>
                 </tr>
                 <?php endforeach; ?>
                 <?php if (empty($suppliers)): ?>
-                <tr><td colspan="6" class="px-6 py-12 text-center text-slate-400 font-medium italic">Không tìm thấy nhà cung cấp phù hợp.</td></tr>
+                <tr><td colspan="7" class="px-6 py-12 text-center text-slate-400 font-medium italic">Không tìm thấy nhà cung cấp phù hợp.</td></tr>
                 <?php endif; ?>
             </tbody>
         </table>
