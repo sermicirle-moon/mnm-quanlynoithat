@@ -14,10 +14,16 @@
             <h1 class="text-3xl font-bold text-gray-800 tracking-tight">Quản lý Sản phẩm</h1>
             <p class="text-sm text-gray-500 mt-1">Theo dõi và cập nhật danh mục nội thất của TimberFlow.</p>
         </div>
-        <a href="?page=qln-products&action=create" 
-           class="bg-[#0a5c36] hover:bg-green-800 text-white px-5 py-2.5 rounded-lg text-sm font-bold shadow-md transition">
-            <i class="fa-solid fa-plus mr-1"></i> Thêm Sản Phẩm
-        </a>
+        <div class="flex gap-3">
+            <button type="button" onclick="document.getElementById('categoryModal').classList.remove('hidden')"
+                    class="bg-white hover:bg-gray-50 text-[#0a5c36] border border-[#0a5c36] px-5 py-2.5 rounded-lg text-sm font-bold shadow-sm transition">
+                <i class="fa-solid fa-tags mr-1"></i> Thêm loại
+            </button>
+            <a href="?page=qln-products&action=create" 
+               class="bg-[#0a5c36] hover:bg-green-800 text-white px-5 py-2.5 rounded-lg text-sm font-bold shadow-md transition">
+                <i class="fa-solid fa-plus mr-1"></i> Thêm Sản Phẩm
+            </a>
+        </div>
     </div>
 
     <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100 mb-6">
@@ -117,5 +123,32 @@
                 </tbody>
             </table>
         </div>
+    </div>
+</div>
+<div id="categoryModal" class="hidden fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-lg rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+            <div>
+                <h2 class="text-xl font-bold text-gray-800">Thêm loại sản phẩm</h2>
+                <p class="text-sm text-gray-500 mt-1">Tạo loại mới để chọn khi thêm hoặc sửa sản phẩm.</p>
+            </div>
+            <button type="button" onclick="document.getElementById('categoryModal').classList.add('hidden')" class="text-gray-400 hover:text-gray-700 text-xl">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        <form action="<?php echo esc_url(admin_url('admin.php?page=qln-products&action=store-category')); ?>" method="POST" class="p-6 space-y-4">
+            <div>
+                <label class="block text-sm font-bold text-gray-700 mb-1">Tên loại</label>
+                <input type="text" name="ten_loai" class="w-full px-4 py-2 border border-gray-200 rounded-lg outline-none focus:border-green-600" required>
+            </div>
+            <div>
+                <label class="block text-sm font-bold text-gray-700 mb-1">Mô tả</label>
+                <textarea name="mo_ta" rows="3" class="w-full px-4 py-2 border border-gray-200 rounded-lg outline-none focus:border-green-600"></textarea>
+            </div>
+            <div class="flex justify-end gap-3 pt-2">
+                <button type="button" onclick="document.getElementById('categoryModal').classList.add('hidden')" class="px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold">Hủy</button>
+                <button type="submit" class="px-5 py-2 rounded-lg bg-[#0a5c36] hover:bg-green-800 text-white font-bold shadow-sm">Lưu loại</button>
+            </div>
+        </form>
     </div>
 </div>

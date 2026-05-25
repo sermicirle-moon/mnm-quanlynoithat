@@ -21,6 +21,9 @@ class ProductController {
             case 'store':
                 $this->store();
                 break;
+            case 'store-category':
+                $this->storeCategory();
+                break;
             case 'edit':
                 $this->showForm($_GET['id']);
                 break;
@@ -115,7 +118,26 @@ class ProductController {
         wp_redirect(admin_url('admin.php?page=qln-products'));
         exit;
     }
+    private function storeCategory() {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') return;
 
+        global $wpdb;
+        $data = [
+            'ten_loai' => sanitize_text_field($_POST['ten_loai'] ?? ''),
+            'mo_ta'    => sanitize_textarea_field($_POST['mo_ta'] ?? ''),
+        ];
+
+        if ($data['ten_loai'] === '') {
+            $_SESSION['qln_error'] = "Tên loại sản phẩm không được để trống!";
+        } elseif ($wpdb->insert($wpdb->prefix . 'qln_loai_sp', $data)) {
+            $_SESSION['qln_success'] = "Thêm loại sản phẩm thành công!";
+        } else {
+            $_SESSION['qln_error'] = "Thêm loại thất bại! Chi tiết lỗi: " . ($wpdb->last_error ?: 'Không xác định được lỗi.');
+        }
+
+        wp_redirect(admin_url('admin.php?page=qln-products'));
+        exit;
+    }
     private function update($id) {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') return;
         

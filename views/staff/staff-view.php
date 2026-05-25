@@ -75,7 +75,7 @@ $pdfUrl = add_query_arg(array_filter([
             </div>
             <div class="flex gap-2 lg:col-span-2 lg:justify-end">
                 <a href="<?php echo esc_url($exportUrl); ?>" class="px-4 py-2 rounded-xl bg-emerald-50 text-emerald-700 text-sm font-bold border border-emerald-100"><i class="fa-solid fa-file-csv mr-2"></i>CSV</a>
-                <a href="<?php echo esc_url($pdfUrl); ?>" class="px-4 py-2 rounded-xl bg-rose-50 text-rose-700 text-sm font-bold border border-rose-100"><i class="fa-solid fa-file-pdf mr-2"></i>PDF</a>
+                <a href="<?php echo esc_url($pdfUrl); ?>" target="_blank" rel="noopener" class="px-4 py-2 rounded-xl bg-rose-50 text-rose-700 text-sm font-bold border border-rose-100"><i class="fa-solid fa-file-pdf mr-2"></i>PDF</a>
             </div>
         </form>
     </div>

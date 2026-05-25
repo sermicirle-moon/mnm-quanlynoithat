@@ -12,11 +12,19 @@ class SupplierController {
             'trang_thai' => sanitize_text_field($_GET['trang_thai'] ?? ''),
         ];
 
+        if ($action === 'create') {
+            $this->showForm();
+            return;
+        }
         if ($action === 'export') {
             $this->exportCsv($repo->getAllWithFilters($filters));
         }
         if ($action === 'pdf') {
             $this->exportPdf($repo->getAllWithFilters($filters));
+        }
+        if ($action === 'store') {
+            $this->store($repo);
+            return;
         }
 
         $limit = 5;
@@ -40,6 +48,36 @@ class SupplierController {
         include plugin_dir_path(__FILE__) . '../views/layout/masterlayout.php';
     }
 
+    private function showForm() {
+        $base_view_path = plugin_dir_path(__FILE__) . '../views/supplier/';
+        $view_content = $base_view_path . 'supplier-form.php';
+        include plugin_dir_path(__FILE__) . '../views/layout/masterlayout.php';
+    }
+    private function store($repo) {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') return;
+
+        global $wpdb;
+        $data = [
+            'ma_ncc'        => sanitize_text_field($_POST['ma_ncc'] ?? ''),
+            'ten_ncc'       => sanitize_text_field($_POST['ten_ncc'] ?? ''),
+            'nguoi_lien_he' => sanitize_text_field($_POST['nguoi_lien_he'] ?? ''),
+            'sdt'           => sanitize_text_field($_POST['sdt'] ?? ''),
+            'email'         => sanitize_email($_POST['email'] ?? ''),
+            'dia_chi'       => sanitize_textarea_field($_POST['dia_chi'] ?? ''),
+            'trang_thai'    => isset($_POST['trang_thai']) ? (int) $_POST['trang_thai'] : 1,
+        ];
+
+        if ($data['ma_ncc'] === '' || $data['ten_ncc'] === '' || $data['sdt'] === '') {
+            $_SESSION['qln_error'] = "Vui lòng nhập mã, tên và số điện thoại nhà cung cấp!";
+        } elseif ($repo->create($data)) {
+            $_SESSION['qln_success'] = "Thêm nhà cung cấp thành công!";
+        } else {
+            $_SESSION['qln_error'] = "Thêm nhà cung cấp thất bại! Chi tiết lỗi: " . ($wpdb->last_error ?: 'Không xác định được lỗi.');
+        }
+
+        wp_redirect(admin_url('admin.php?page=qln-suppliers'));
+        exit;
+    }
     private function buildUrlParams($filters) {
         $params = '';
         foreach ($filters as $key => $value) {
@@ -66,16 +104,23 @@ class SupplierController {
     }
 
     private function exportPdf($suppliers) {
+        $filename = $this->buildPdfFilename('suppliers');
+
         nocache_headers();
         header('Content-Type: text/html; charset=UTF-8');
         ?>
         <!DOCTYPE html>
-        <html><head><meta charset="UTF-8"><title>Bao cao nha cung cap</title>
-        <style>body{font-family:Arial,sans-serif;color:#0f172a;padding:24px}h1{font-size:24px;margin-bottom:4px}.meta{color:#64748b;margin-bottom:20px}table{width:100%;border-collapse:collapse;font-size:12px}th,td{border:1px solid #e2e8f0;padding:8px;text-align:left}th{background:#f1f5f9}.print{margin-bottom:16px}@media print{.print{display:none}}</style>
-        </head><body><button class="print" onclick="window.print()">In / Lưu PDF</button><h1>Bao cao nha cung cap</h1><p class="meta">Tong: <?php echo esc_html((string) count($suppliers)); ?> nha cung cap - Ngay xuat: <?php echo esc_html(date('d/m/Y H:i')); ?></p><table><thead><tr><th>Ma NCC</th><th>Ten NCC</th><th>Nguoi lien he</th><th>SDT</th><th>Email</th><th>Dia chi</th><th>Trang thai</th></tr></thead><tbody>
+        <html><head><meta charset="UTF-8"><title><?php echo esc_html($filename); ?></title>
+        <style>body{font-family:Arial,sans-serif;color:#0f172a;padding:24px}h1{font-size:24px;margin-bottom:4px}.meta{color:#64748b;margin-bottom:20px}.actions{display:flex;gap:8px;margin-bottom:16px}button{border:1px solid #cbd5e1;background:#fff;border-radius:8px;padding:8px 12px;font-weight:700;cursor:pointer}table{width:100%;border-collapse:collapse;font-size:12px}th,td{border:1px solid #e2e8f0;padding:8px;text-align:left}th{background:#f1f5f9}@media print{.actions{display:none}}</style>
+        </head><body><div class="actions"><button onclick="window.print()">In / Lưu PDF</button><button onclick="window.close()">Đóng</button></div><h1>Báo cáo nhà cung cấp</h1><p class="meta">Tên file gợi ý: <?php echo esc_html($filename); ?>.pdf</p><p class="meta">Tổng: <?php echo esc_html((string) count($suppliers)); ?> nhà cung cấp - Ngày xuất: <?php echo esc_html(date_i18n('d/m/Y H:i')); ?></p><table><thead><tr><th>Mã NCC</th><th>Tên NCC</th><th>Người liên hệ</th><th>SĐT</th><th>Email</th><th>Địa chỉ</th><th>Trạng thái</th></tr></thead><tbody>
         <?php foreach ($suppliers as $supplier): ?><tr><td><?php echo esc_html($supplier->ma_ncc); ?></td><td><?php echo esc_html($supplier->ten_ncc); ?></td><td><?php echo esc_html($supplier->nguoi_lien_he); ?></td><td><?php echo esc_html($supplier->sdt); ?></td><td><?php echo esc_html($supplier->email); ?></td><td><?php echo esc_html($supplier->dia_chi); ?></td><td><?php echo esc_html($supplier->getTrangThaiText()); ?></td></tr><?php endforeach; ?>
         </tbody></table><script>window.addEventListener('load',function(){window.print();});</script></body></html>
         <?php
         exit;
+    }
+
+    private function buildPdfFilename($module) {
+        $username = sanitize_file_name((string) ($_SESSION['qln_user_name'] ?? 'admin'));
+        return $username . '_' . $module . '_' . date_i18n('Y-m-d_H-i-s');
     }
 }

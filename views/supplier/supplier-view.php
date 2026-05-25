@@ -18,6 +18,13 @@ $pdfUrl = add_query_arg(array_filter([
 ], static fn($value) => $value !== ''), admin_url('admin.php'));
 ?>
 <div class="flex-1 overflow-y-auto p-8 bg-[#f8f9ff]">
+<?php if(isset($_SESSION['qln_success'])): ?>
+    <div class="bg-green-100 text-green-700 p-3 rounded mb-4 text-sm font-bold shadow-sm border-l-4 border-green-500"><i class="fa-solid fa-check-circle mr-1"></i> <?php echo $_SESSION['qln_success']; unset($_SESSION['qln_success']); ?></div>
+<?php endif; ?>
+<?php if(isset($_SESSION['qln_error'])): ?>
+    <div class="bg-red-100 text-red-700 p-3 rounded mb-4 text-sm font-bold shadow-sm border-l-4 border-red-500"><i class="fa-solid fa-triangle-exclamation mr-1"></i> <?php echo $_SESSION['qln_error']; unset($_SESSION['qln_error']); ?></div>
+<?php endif; ?>
+
     <div class="flex justify-between items-end mb-8">
         <div>
             <div class="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-emerald-700 mb-2">
@@ -28,9 +35,7 @@ $pdfUrl = add_query_arg(array_filter([
             <p class="text-sm text-slate-500 mt-1">Quản lý đối tác gỗ nguyên liệu và phụ kiện nội thất cao cấp.</p>
         </div>
         <div class="flex gap-3">
-            <button class="bg-emerald-700 hover:bg-emerald-800 text-white px-4 py-2 rounded-xl text-sm font-bold shadow-lg shadow-emerald-700/20 flex items-center gap-2">
-                <i class="fa-solid fa-plus"></i> Thêm đối tác
-            </button>
+            <a href="<?php echo esc_url(admin_url('admin.php?page=qln-suppliers&action=create')); ?>" class="bg-emerald-700 hover:bg-emerald-800 text-white px-4 py-2 rounded-xl text-sm font-bold shadow-lg shadow-emerald-700/20 flex items-center gap-2"><i class="fa-solid fa-plus"></i> Thêm nhà cung cấp</a>
         </div>
     </div>
 
@@ -75,7 +80,7 @@ $pdfUrl = add_query_arg(array_filter([
             </div>
             <div class="flex gap-2 lg:col-span-2 lg:justify-end">
                 <a href="<?php echo esc_url($exportUrl); ?>" class="px-4 py-2 rounded-xl bg-emerald-50 text-emerald-700 text-sm font-bold border border-emerald-100"><i class="fa-solid fa-file-csv mr-2"></i>CSV</a>
-                <a href="<?php echo esc_url($pdfUrl); ?>" class="px-4 py-2 rounded-xl bg-rose-50 text-rose-700 text-sm font-bold border border-rose-100"><i class="fa-solid fa-file-pdf mr-2"></i>PDF</a>
+                <a href="<?php echo esc_url($pdfUrl); ?>" target="_blank" rel="noopener" class="px-4 py-2 rounded-xl bg-rose-50 text-rose-700 text-sm font-bold border border-rose-100"><i class="fa-solid fa-file-pdf mr-2"></i>PDF</a>
             </div>
         </form>
     </div>
@@ -130,3 +135,4 @@ $pdfUrl = add_query_arg(array_filter([
 <script>
 document.querySelectorAll('.js-auto-filter').forEach(function(form){var timer;var paged=form.querySelector('[name="paged"]');form.querySelectorAll('input[name="search"]').forEach(function(input){input.addEventListener('input',function(){clearTimeout(timer);timer=setTimeout(function(){if(paged){paged.value='1';}form.submit();},350);});});form.querySelectorAll('select').forEach(function(select){select.addEventListener('change',function(){if(paged){paged.value='1';}form.submit();});});});
 </script>
+

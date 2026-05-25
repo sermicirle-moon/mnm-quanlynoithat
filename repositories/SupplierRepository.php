@@ -51,6 +51,10 @@ class SupplierRepository {
         return $suppliers;
     }
 
+    public function create($data) {
+        global $wpdb;
+        return $wpdb->insert($this->table, $data);
+    }
     public function getTotalCount($filters = []) {
         global $wpdb;
         $where = $this->buildWhereClause($filters);
