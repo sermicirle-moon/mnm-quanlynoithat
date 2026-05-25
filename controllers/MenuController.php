@@ -12,6 +12,10 @@ class MenuController {
         add_submenu_page(null, 'Sản phẩm', 'Sản phẩm', 'read', 'qln-products', [$this, 'renderProducts']);
         add_submenu_page(null, 'Khách hàng', 'Khách hàng', 'read', 'qln-customers', [$this, 'renderCustomers']);
         add_submenu_page(null, 'Hóa đơn', 'Hóa đơn', 'read', 'qln-invoices', [$this, 'renderInvoices']);
+        add_submenu_page(null, 'Nhân viên', 'Nhân viên', 'read', 'qln-staff', [$this, 'renderStaff']);
+        add_submenu_page(null, 'Nhà cung cấp', 'Nhà cung cấp', 'read', 'qln-suppliers', [$this, 'renderSuppliers']);
+        add_submenu_page(null, 'Nhà vận chuyển', 'Nhà vận chuyển', 'read', 'qln-shipping', [$this, 'renderShipping']);
+        add_submenu_page(null, 'Báo cáo', 'Báo cáo', 'read', 'qln-reports', [$this, 'renderReports']);
         
         // Các sub-menu ẩn cho CRUD phiếu nhập
         add_submenu_page(null, 'Tạo PN', 'Tạo PN', 'read', 'qln-nhap-hang-add', [$this, 'renderNhapHangAdd']);
@@ -50,6 +54,26 @@ class MenuController {
 
     public function renderInvoices() {
         $controller = new InvoiceController();
+        $controller->index();
+    }
+
+    public function renderStaff() {
+        $controller = new StaffController();
+        $controller->index();
+    }
+
+    public function renderSuppliers() {
+        $controller = new SupplierController();
+        $controller->index();
+    }
+
+    public function renderReports() {
+        $controller = new ReportController();
+        $controller->handleRequest();
+    }
+
+    public function renderShipping() {
+        $controller = new ShippingController();
         $controller->index();
     }
 

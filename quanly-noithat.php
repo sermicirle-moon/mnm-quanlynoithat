@@ -48,6 +48,8 @@ require_once plugin_dir_path(__FILE__) . 'models/Product.php';
 require_once plugin_dir_path(__FILE__) . 'models/Customer.php';
 require_once plugin_dir_path(__FILE__) . 'models/Invoice.php';
 require_once plugin_dir_path(__FILE__) . 'models/InvoiceDetail.php';
+require_once plugin_dir_path(__FILE__) . 'models/Supplier.php';
+require_once plugin_dir_path(__FILE__) . 'models/ShippingCarrier.php';
 
 // 2. Nhúng Repositories
 require_once plugin_dir_path(__FILE__) . 'repositories/UserRepository.php';
@@ -55,6 +57,9 @@ require_once plugin_dir_path(__FILE__) . 'repositories/ProductRepository.php';
 require_once plugin_dir_path(__FILE__) . 'repositories/CustomerRepository.php';
 require_once plugin_dir_path(__FILE__) . 'repositories/InvoiceRepository.php';
 require_once plugin_dir_path(__FILE__) . 'repositories/InvoiceDetailRepository.php';
+require_once plugin_dir_path(__FILE__) . 'repositories/SupplierRepository.php';
+require_once plugin_dir_path(__FILE__) . 'repositories/ReportRepository.php';
+require_once plugin_dir_path(__FILE__) . 'repositories/ShippingRepository.php';
 
 // 3. Nhúng Controllers
 require_once plugin_dir_path(__FILE__) . 'controllers/AuthController.php';
@@ -63,6 +68,10 @@ require_once plugin_dir_path(__FILE__) . 'controllers/MenuController.php';
 require_once plugin_dir_path(__FILE__) . 'controllers/ProductController.php';
 require_once plugin_dir_path(__FILE__) . 'controllers/CustomerController.php';
 require_once plugin_dir_path(__FILE__) . 'controllers/InvoiceController.php';
+require_once plugin_dir_path(__FILE__) . 'controllers/StaffController.php';
+require_once plugin_dir_path(__FILE__) . 'controllers/SupplierController.php';
+require_once plugin_dir_path(__FILE__) . 'controllers/ReportController.php';
+require_once plugin_dir_path(__FILE__) . 'controllers/ShippingController.php';
 
 
 // Khởi chạy Menu
